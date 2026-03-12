@@ -1,0 +1,6 @@
+<% @stacks.each do |stack| %>
+  <div class="stack">
+    <h3><%= stack.title %></h3>
+    <%= link_to "Abrir", stack_path(stack) %>
+  </div>
+<% end %>
