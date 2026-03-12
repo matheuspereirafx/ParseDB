@@ -14,6 +14,10 @@ Rails.application.routes.draw do
   #
   root "pages#home"
 
-  
+
+  resources :stacks, only: [:index, :show ] do
+
+  end
+
 
 end
