@@ -1,7 +1,7 @@
 <div class="chat-page">
 
   <div class="chat-header">
-    <%= link_to "← voltar", stack_chats_path(@stack), class: "back-btn" %>
+    <%= link_to "← voltar", stack_chats_path(@stack), class: "back-btn mt-5" %>
     <span class="chat-title"><%= @chat.title %></span>
     <span class="stack-badge"><%= @stack.icon %> <%= @stack.name %></span>
   </div>
@@ -23,21 +23,20 @@
   <div class="input-area">
     <div class="input-container">
       <%= simple_form_for [@stack, @chat, @message] do |f| %>
-        <%= f.input :content,
-            label: false,
-            as: :text,
-            input_html: {
-              placeholder: "Descreva seu projeto...",
-              rows: 4,
-              class: "chat-textarea",
-              id: "chat-input"
-            } %>
-        <div class="submit-row">
+        <div class="input-wrapper">
+          <%= f.input :content,
+              label: false,
+              as: :text,
+              input_html: {
+                placeholder: "Descreva seu projeto...",
+                rows: 4,
+                class: "chat-textarea",
+                id: "chat-input"
+              } %>
           <%= f.submit "→", class: "send-btn" %>
         </div>
       <% end %>
     </div>
-    <p class="hint">Enter para nova linha · botão para enviar</p>
   </div>
 </div>
 
