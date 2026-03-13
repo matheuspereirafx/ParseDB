@@ -1,0 +1,17 @@
+<h1><%= @chat.title %></h1>
+
+<div id="messages">
+  <% @messages.each do |message| %>
+    <div>
+      <strong><%= message.role == 'user' ? 'Você' : 'Assistente' %>:</strong>
+      <p><%= message.content %></p>
+    </div>
+  <% end %>
+</div>
+
+<%= form_with model: [@chat, Message.new] do |f| %>
+  <%= f.text_area :content %>
+  <%= f.submit "Enviar" %>
+<% end %>
+
+<%= link_to "Voltar", chats_path %>

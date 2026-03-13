@@ -1,0 +1,12 @@
+<h1>Novo Chat</h1>
+
+<%= form_with model: @chat do |f| %>
+  <div>
+    <%= f.label :title %>
+    <%= f.text_field :title %>
+  </div>
+
+  <%= f.submit "Criar Chat" %>
+<% end %>
+
+<%= link_to "Voltar", chats_path %>
