@@ -1,48 +1,86 @@
-<div class="chat-page">
+<div class="chat-layout">
+  <!-- SIDEBAR -->
+  <aside class="chat-sidebar" id="chatSidebar">
+    <div class="sidebar-header">
+      <%= link_to new_stack_chat_path(@stack), class: "new-chat-btn" do %>
+        + Novo Chat
+      <% end %>
+      <button class="sidebar-toggle" id="sidebarClose">✕</button>
+    </div>
 
-  <div class="chat-header">
-    <%= link_to "← voltar", stack_chats_path(@stack), class: "back-btn mt-5" %>
-    <span class="chat-title"><%= @chat.title %></span>
-    <span class="stack-badge"><%= @stack.icon %> <%= @stack.name %></span>
-  </div>
-
-<div class="messages-area" id="messages">
-  <div class="messages-container">
-    <% @messages.each do |message| %>
-      <div class="message <%= message.role %>">
-        <div class="avatar"><%= message.role == 'user' ? current_user.email.first.upcase : '🤖' %></div>
-        <div>
-          <div class="bubble"><%= simple_format message.content %></div>
-          <div class="message-meta">
-            <%= message.role == 'user' ? 'Você' : 'Assistente' %> · <%= message.created_at.strftime("%H:%M") %>
-          </div>
-        </div>
-      </div>
-    <% end %>
-  </div>
-</div>
-
-  <div class="input-area">
-    <div class="input-container">
-      <%= simple_form_for [@stack, @chat, @message] do |f| %>
-        <div class="input-wrapper">
-          <%= f.input :content,
-              label: false,
-              as: :text,
-              input_html: {
-                placeholder: "Descreva seu projeto...",
-                rows: 4,
-                class: "chat-textarea",
-                id: "chat-input"
-              } %>
-          <%= f.submit "→", class: "send-btn" %>
-        </div>
+    <div class="sidebar-chats">
+      <% @stack.chats.order(updated_at: :desc).each do |chat| %>
+        <%= link_to stack_chat_path(@stack, chat),
+            class: "sidebar-chat-item #{'active' if chat == @chat}" do %>
+          <span class="chat-item-title"><%= chat.title %></span>
+          <span class="chat-item-meta"><%= chat.messages.count %> msgs</span>
+        <% end %>
       <% end %>
     </div>
-  </div>
+  </aside>
+
+  <!-- BOTÃO ABRIR SIDEBAR (quando fechada) -->
+  <button class="sidebar-open-btn" id="sidebarOpen">☰</button>
+
+  <!-- MAIN CHAT -->
+  <main class="chat-main">
+    <div class="chat-header">
+      <span class="chat-title"><%= @chat.title %></span>
+      <span class="stack-badge"><%= @stack.icon %> <%= @stack.name %></span>
+    </div>
+
+    <div class="messages-area" id="messages">
+      <div class="messages-container">
+        <% @messages.each do |message| %>
+          <div class="message <%= message.role %>">
+            <div class="avatar"><%= message.role == 'user' ? current_user.email.first.upcase : '🤖' %></div>
+            <div>
+              <div class="bubble"><%= simple_format message.content %></div>
+              <div class="message-meta">
+                <%= message.role == 'user' ? 'Você' : 'Assistente' %> · <%= message.created_at.strftime("%H:%M") %>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="input-area">
+      <div class="input-container">
+        <%= simple_form_for [@stack, @chat, @message] do |f| %>
+          <div class="input-wrapper">
+            <%= f.input :content,
+                label: false,
+                as: :text,
+                input_html: {
+                  placeholder: "Descreva seu projeto...",
+                  rows: 4,
+                  class: "chat-textarea",
+                  id: "chat-input"
+                } %>
+            <%= f.submit "→", class: "send-btn" %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </main>
 </div>
 
 <script>
   const messages = document.getElementById('messages');
   if (messages) messages.scrollTop = messages.scrollHeight;
+
+  const sidebar = document.getElementById('chatSidebar');
+  const openBtn = document.getElementById('sidebarOpen');
+  const closeBtn = document.getElementById('sidebarClose');
+
+  closeBtn.addEventListener('click', () => {
+    sidebar.classList.add('collapsed');
+    openBtn.classList.add('visible');
+  });
+
+  openBtn.addEventListener('click', () => {
+    sidebar.classList.remove('collapsed');
+    openBtn.classList.remove('visible');
+  });
 </script>
