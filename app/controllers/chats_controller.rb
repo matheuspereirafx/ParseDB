@@ -20,6 +20,13 @@ class ChatsController < ApplicationController
     @chat = Chat.new(chat_params)
     @chat.user = current_user
 
+    if Stack.exists?
+      @chat.stacks_id = Stack.first.id
+    else
+      flash[:alert] = "Crie um stack primeiro antes de criar um chat"
+      redirect_to new_chat_path and return
+    end
+
     if @chat.save
       redirect_to @chat, notice: "Chat criado com sucesso!"
     else
@@ -30,7 +37,7 @@ class ChatsController < ApplicationController
   private
 
   def set_chat
-    @chat = current_user.chats.find(params[:id])
+    @chat = Chat.find(params[:id])
   end
 
   def chat_params
