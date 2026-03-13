@@ -12,184 +12,26 @@
       <span class="sf-gradient-text">Database Schema</span>
     </h1>
     <p class="sf-hero-subtitle">
-      Descreve o teu projeto em linguagem natural. A IA gera o schema,
-      o diagrama visual, o XML para db.lewagon.org e seeds realistas.
+      Descreve o teu projeto em linguagem natural. A IA gera o
+      schema, o diagrama visual, o XML para db.lewagon.org e seeds
+      realistas.
     </p>
     <div class="sf-hero-buttons">
-      <%= link_to "#start", class: "sf-btn-primary" do %>
-        Começar a criar →
+      <%= link_to "#", class: "sf-btn-primary" do %>
+        🗂️ Schema
       <% end %>
-      <%= link_to "https://github.com/matheuspereirafx/ParseDB", target: "_blank", class: "sf-btn-secondary" do %>
-        GitHub
+      <%= link_to "#", class: "sf-btn-primary" do %>
+        🌱 Seeds
+      <% end %>
+      <%= link_to "#", class: "sf-btn-primary" do %>
+        📄 DataBase
       <% end %>
     </div>
-  </section>
-
-  <!-- DEMO WINDOW -->
-  <div class="sf-demo">
-    <div class="sf-demo-window">
-      <div class="sf-demo-titlebar">
-        <span class="sf-dot sf-dot-red"></span>
-        <span class="sf-dot sf-dot-yellow"></span>
-        <span class="sf-dot sf-dot-green"></span>
-        <span>schemaforge — user_stories.rb</span>
-      </div>
-      <div class="sf-demo-body">
-        <div class="sf-demo-input">
-          <div class="sf-label">📝 User Stories</div>
-          <div class="sf-story">
-            <span class="keyword">Como</span> <span class="entity">viajante</span>,<br>
-            eu quero <span class="action">pesquisar apartamentos</span><br>
-            por cidade<br><br>
-
-            <span class="keyword">Como</span> <span class="entity">viajante</span>,<br>
-            eu quero <span class="action">fazer uma reserva</span><br>
-            para garantir o apartamento<br><br>
-
-            <span class="keyword">Como</span> <span class="entity">anfitrião</span>,<br>
-            eu quero <span class="action">criar um anúncio</span><br>
-            para alugar o meu espaço<br><br>
-
-            <span class="keyword">Como</span> <span class="entity">viajante</span>,<br>
-            eu quero <span class="action">deixar uma review</span><br>
-            após a minha estadia
-          </div>
-        </div>
-        <div class="sf-demo-output">
-          <div class="sf-label">
-            <span class="sf-live-dot"></span>
-            Schema Gerado — schema.rb
-          </div>
-          <div class="sf-code">
-            <span class="cmt"># db/schema.rb</span><br><br>
-            <span class="kw">create_table</span> <span class="str">"users"</span> <span class="kw">do</span> |t|<br>
-            &nbsp;&nbsp;t.string <span class="sym">:email</span><br>
-            &nbsp;&nbsp;t.string <span class="sym">:role</span><br>
-            <span class="kw">end</span><br><br>
-            <span class="kw">create_table</span> <span class="str">"apartments"</span> <span class="kw">do</span> |t|<br>
-            &nbsp;&nbsp;t.string <span class="sym">:title</span><br>
-            &nbsp;&nbsp;t.string <span class="sym">:city</span><br>
-            &nbsp;&nbsp;t.references <span class="sym">:user</span><br>
-            <span class="kw">end</span><br><br>
-            <span class="kw">create_table</span> <span class="str">"bookings"</span> <span class="kw">do</span> |t|<br>
-            &nbsp;&nbsp;t.date <span class="sym">:check_in</span><br>
-            &nbsp;&nbsp;t.date <span class="sym">:check_out</span><br>
-            &nbsp;&nbsp;t.references <span class="sym">:user</span><br>
-            &nbsp;&nbsp;t.references <span class="sym">:apartment</span><br>
-            <span class="kw">end</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- PIPELINE -->
-  <section class="sf-pipeline-section" id="pipeline">
-    <div class="sf-section-label">Como funciona</div>
-    <h2 class="sf-section-title">De ideia a schema em segundos</h2>
-    <div class="sf-pipeline">
-      <div class="sf-pipeline-step">
-        <div class="sf-pipeline-icon sf-pipeline-icon-1">📝</div>
-        <h3>User Stories</h3>
-        <p>Escreve em português o que a app faz</p>
-      </div>
-      <div class="sf-pipeline-arrow">→</div>
-      <div class="sf-pipeline-step">
-        <div class="sf-pipeline-icon sf-pipeline-icon-2">🤖</div>
-        <h3>IA Analisa</h3>
-        <p>Identifica modelos e relações</p>
-      </div>
-      <div class="sf-pipeline-arrow">→</div>
-      <div class="sf-pipeline-step">
-        <div class="sf-pipeline-icon sf-pipeline-icon-3">🗂️</div>
-        <h3>Schema + XML</h3>
-        <p>Gera código Rails e XML para Le Wagon</p>
-      </div>
-      <div class="sf-pipeline-arrow">→</div>
-      <div class="sf-pipeline-step">
-        <div class="sf-pipeline-icon sf-pipeline-icon-4">🌱</div>
-        <h3>Seeds</h3>
-        <p>Dados brasileiros realistas prontos a usar</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- FEATURES -->
-  <section class="sf-features-section" id="features">
-    <div class="sf-section-label">Features</div>
-    <h2 class="sf-section-title">Tudo o que precisas para o teu projeto</h2>
-    <div class="sf-features-grid">
-      <div class="sf-feature-card">
-        <div class="sf-feature-icon sf-feature-icon-1">💬</div>
-        <h3>Linguagem Natural</h3>
-        <p>Escreve user stories em português ou inglês. A IA entende o contexto e gera modelos inteligentes.</p>
-      </div>
-      <div class="sf-feature-card">
-        <div class="sf-feature-icon sf-feature-icon-2">📊</div>
-        <h3>Diagrama ER Visual</h3>
-        <p>Visualiza as tabelas e relações num diagrama interativo. Vê o teu schema antes de programar.</p>
-      </div>
-      <div class="sf-feature-card">
-        <div class="sf-feature-icon sf-feature-icon-3">🌱</div>
-        <h3>Seeds Realistas</h3>
-        <p>Nomes brasileiros, datas consistentes, relações válidas e edge cases automáticos no seeds.rb.</p>
-      </div>
-      <div class="sf-feature-card">
-        <div class="sf-feature-icon sf-feature-icon-4">📋</div>
-        <h3>XML Le Wagon</h3>
-        <p>Export direto para db.lewagon.org. Copia, cola, e vê o teu schema no visualizador oficial.</p>
-      </div>
-      <div class="sf-feature-card">
-        <div class="sf-feature-icon sf-feature-icon-5">⚡</div>
-        <h3>Migrações Rails</h3>
-        <p>Gera comandos rails generate model prontos a correr no terminal. Zero configuração.</p>
-      </div>
-      <div class="sf-feature-card">
-        <div class="sf-feature-icon sf-feature-icon-6">🔄</div>
-        <h3>Itera com IA</h3>
-        <p>Adiciona novas user stories e o schema evolui. A IA sugere melhorias e relações que faltam.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- EXPORT -->
-  <section class="sf-export-section" id="export">
-    <div class="sf-section-label">Export</div>
-    <h2 class="sf-section-title">Copia para o teu projeto</h2>
-    <div class="sf-export-formats">
-      <div class="sf-export-card">
-        <div class="sf-export-icon">💎</div>
-        <span>schema.rb</span>
-        <small>Rails</small>
-      </div>
-      <div class="sf-export-card">
-        <div class="sf-export-icon">📄</div>
-        <span>db.xml</span>
-        <small>Le Wagon</small>
-      </div>
-      <div class="sf-export-card">
-        <div class="sf-export-icon">🌱</div>
-        <span>seeds.rb</span>
-        <small>Dados</small>
-      </div>
-      <div class="sf-export-card">
-        <div class="sf-export-icon">⚙️</div>
-        <span>migrations</span>
-        <small>Terminal</small>
-      </div>
-    </div>
-  </section>
-
-  <!-- CTA -->
-  <section class="sf-cta" id="start">
-    <h2>Pronto para criar o teu schema?</h2>
-    <p>Escreve as tuas user stories e deixa a IA fazer o resto.</p>
-    <%= link_to "Começar agora — é grátis →", "#", class: "sf-btn-primary" %>
   </section>
 
   <!-- FOOTER -->
   <footer class="sf-footer">
-    Feito com 💜 por Equipa Parse DB · Le Wagon 2026 ·
-    <%= link_to "GitHub", "https://github.com/matheuspereirafx/ParseDB", target: "_blank" %>
+    Feito com 💜 por Equipa ParseDB · Le Wagon 2026 ·
+    <%= link_to "GitHub", "https://github.com", target: "_blank" %>
   </footer>
 </div>
