@@ -7,12 +7,25 @@
     </div>
 
     <div class="sidebar-chats">
-      <% @stack.chats.order(updated_at: :desc).each do |chat| %>
-        <%= link_to stack_chat_path(@stack, chat),
-            class: "sidebar-chat-item #{'active' if chat == @chat}" do %>
-          <span class="chat-item-title"><%= chat.title %></span>
-          <span class="chat-item-meta"><%= chat.messages.count %> msgs</span>
-        <% end %>
+      <% @stack.chats.where(user: current_user).order(updated_at: :desc).each do |chat| %>
+        <div class="sidebar-chat-item-wrapper">
+          <%= link_to stack_chat_path(@stack, chat),
+              class: "sidebar-chat-item #{'active' if defined?(@chat) && chat == @chat}" do %>
+            <span class="chat-item-title"><%= chat.title %></span>
+            <span class="chat-item-meta"><%= chat.messages.count %> msgs</span>
+          <% end %>
+
+          <div class="chat-item-menu" data-chat-id="<%= chat.id %>">
+            <button class="chat-menu-btn" onclick="toggleChatMenu(<%= chat.id %>)">⋯</button>
+            <div class="chat-menu-dropdown" id="chatMenu-<%= chat.id %>">
+              <button onclick="renameChat(<%= chat.id %>, '<%= j chat.title %>')">✏️ Renomear</button>
+              <%= button_to "🗑️ Excluir", stack_chat_path(@stack, chat),
+                  method: :delete,
+                  class: "chat-menu-delete",
+                  data: { turbo_confirm: "Tem certeza?" } %>
+            </div>
+          </div>
+        </div>
       <% end %>
     </div>
   </aside>
@@ -24,7 +37,6 @@
   <main class="chat-main">
     <div class="chat-header">
       <span class="chat-title"><%= @chat.title %></span>
-      <span class="stack-badge"><%= @stack.icon %> <%= @stack.name %></span>
     </div>
 
     <div class="messages-area" id="messages">
@@ -81,4 +93,48 @@
     sidebar.classList.remove('collapsed');
     openBtn.classList.remove('visible');
   });
+
+  // Fecha menus ao clicar fora
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.chat-item-menu')) {
+      document.querySelectorAll('.chat-menu-dropdown.open').forEach(el => el.classList.remove('open'));
+    }
+  });
+
+  function toggleChatMenu(chatId) {
+    document.querySelectorAll('.chat-menu-dropdown.open').forEach(el => {
+      if (el.id !== `chatMenu-${chatId}`) el.classList.remove('open');
+    });
+    document.getElementById(`chatMenu-${chatId}`).classList.toggle('open');
+  }
+
+  function renameChat(chatId, currentTitle) {
+    const newTitle = prompt("Novo título:", currentTitle);
+    if (newTitle && newTitle !== currentTitle) {
+      const form = document.createElement('form');
+      form.method = 'POST';
+      form.action = `<%= stack_chats_path(@stack) %>/${chatId}`;
+
+      const method = document.createElement('input');
+      method.type = 'hidden';
+      method.name = '_method';
+      method.value = 'patch';
+      form.appendChild(method);
+
+      const token = document.createElement('input');
+      token.type = 'hidden';
+      token.name = 'authenticity_token';
+      token.value = document.querySelector('meta[name="csrf-token"]').content;
+      form.appendChild(token);
+
+      const title = document.createElement('input');
+      title.type = 'hidden';
+      title.name = 'chat[title]';
+      title.value = newTitle;
+      form.appendChild(title);
+
+      document.body.appendChild(form);
+      form.submit();
+    }
+  }
 </script>

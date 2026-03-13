@@ -351,3 +351,80 @@
     background: rgba(167,139,250,0.05);
   }
 }
+// ========== CHAT ITEM WITH MENU ==========
+.sidebar-chat-item-wrapper {
+  display: flex;
+  align-items: center;
+  position: relative;
+
+  .sidebar-chat-item {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .chat-item-menu {
+    position: relative;
+    flex-shrink: 0;
+  }
+}
+
+.chat-menu-btn {
+  background: none;
+  border: none;
+  color: rgba(255,255,255,0.25);
+  font-size: 16px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  opacity: 0;
+  transition: all 0.2s;
+
+  .sidebar-chat-item-wrapper:hover & {
+    opacity: 1;
+  }
+
+  &:hover {
+    color: #fff;
+    background: rgba(255,255,255,0.06);
+  }
+}
+
+.chat-menu-dropdown {
+  display: none;
+  position: absolute;
+  right: 0;
+  top: 100%;
+  background: #141825;
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 8px;
+  padding: 4px;
+  min-width: 140px;
+  z-index: 20;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+
+  &.open { display: block; }
+
+  button, input[type="submit"] {
+    display: block;
+    width: 100%;
+    padding: 8px 12px;
+    background: none;
+    border: none;
+    color: rgba(255,255,255,0.7);
+    font-size: 12px;
+    font-family: 'Space Mono', monospace;
+    text-align: left;
+    cursor: pointer;
+    border-radius: 4px;
+
+    &:hover {
+      background: rgba(255,255,255,0.06);
+      color: #fff;
+    }
+  }
+
+  .chat-menu-delete input[type="submit"] {
+    color: #ef4444;
+    &:hover { background: rgba(239,68,68,0.1); }
+  }
+}
