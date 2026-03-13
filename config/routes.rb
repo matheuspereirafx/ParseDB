@@ -12,5 +12,6 @@ Rails.application.routes.draw do
   # Mínimo necessário para chats funcionarem
   resources :chats, only: [ :index, :show, :new, :create ] do
     resources :messages, only: [ :create ]
+    resource :multi_modal, only: [:create], controller: "multi_modal"
   end
 end
