@@ -14,7 +14,7 @@
     <div class="sf-nav-links">
       <% if user_signed_in? %>
         <%= link_to "Home", root_path, class: "sf-nav-link" %>
-        <%= link_to "Messages", "#", class: "sf-nav-link" %>
+        <%= link_to "Chats", "#", class: "sf-nav-link" %>
 
         <div class="sf-nav-dropdown" data-navbar-target="dropdown">
           <button class="sf-nav-avatar" data-action="click->navbar#toggleDropdown">
@@ -22,7 +22,7 @@
           </button>
           <div class="sf-nav-dropdown-menu">
             <%= link_to "O meu perfil", "#" %>
-            <%= link_to "Os meus schemas", "#" %>
+            <%= link_to "Chats", "#" %>
             <div class="sf-nav-dropdown-divider"></div>
             <%= link_to "Log out", destroy_user_session_path, data: { turbo_method: :delete } %>
           </div>
