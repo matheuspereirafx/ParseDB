@@ -11,8 +11,8 @@
 
     <%= yield :head %>
 
-      <%# Enable PWA manifest for installable apps (make sure to enable in config/routes.rb too!) %>
-      <%#= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
+    <%# Enable PWA manifest for installable apps (make sure to enable in config/routes.rb too!) %>
+    <%#= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
 
     <link rel="icon" href="/icon.png" type="image/png">
     <link rel="icon" href="/icon.svg" type="image/svg+xml">
@@ -27,5 +27,10 @@
     <%= render "shared/navbar" %>
     <%= render "shared/flashes" %>
     <%= yield %>
+
+    <footer class="sf-footer">
+      Feito com 💜 pela Equipe ParseDB · Le Wagon 2026 ·
+      <%= link_to "GitHub", "https://github.com/matheuspereirafx/ParseDB", target: "_blank" %>
+    </footer>
   </body>
 </html>

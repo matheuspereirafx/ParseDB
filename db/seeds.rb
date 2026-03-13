@@ -21,26 +21,33 @@ puts "=" * 50
 
 puts "\n🧹 Limpando banco de dados..."
 Stack.destroy_all
-#Chat.destroy_all
-#Message.destroy_all
+# Chat.destroy_all
+# Message.destroy_all
 puts "✅ Banco limpo!"
 
 
 puts "Criando Stacks..."
 
 Stack.create!(
-  title: "Instrução de Setup",
-  content: "Para configurar o projeto, primeiro clone o repositório..."
+  title: "Setup Instructions",
+  content: "Para configurar o projeto, primeiro clone o repositório...",
+  name: "xxxxxx",
+  description: "yyyyyyy"
 )
 
 Stack.create!(
   title: "Schema Generator",
-  content: "rails generate model User name:string email:string..."
+  content: "rails generate model User name:string email:string...",
+  name: "xxxxxx",
+  description: "yyyyyyy"
 )
+
 
 Stack.create!(
   title: "Seed Example",
-  content: "User.create!(name: 'João Silva', email: 'joao@example.com'...)"
+  content: "User.create!(name: 'João Silva', email: 'joao@example.com'...)",
+  name: "xxxxxx",
+  description: "yyyyyyy"
 )
 
 puts "✅ 3 Stacks criados com sucesso!"
