@@ -21,15 +21,15 @@ puts "=" * 50
 
 puts "\n🧹 Limpando banco de dados..."
 Stack.destroy_all
-#Chat.destroy_all
-#Message.destroy_all
+# Chat.destroy_all
+# Message.destroy_all
 puts "✅ Banco limpo!"
 
 
 puts "Criando Stacks..."
 
 Stack.create!(
-  title: "Instrução de Setup",
+  title: "Setup Instructions",
   content: "Para configurar o projeto, primeiro clone o repositório...",
   name: "xxxxxx",
   description: "yyyyyyy"
