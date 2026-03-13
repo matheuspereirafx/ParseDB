@@ -30,17 +30,24 @@ puts "Criando Stacks..."
 
 Stack.create!(
   title: "Instrução de Setup",
-  content: "Para configurar o projeto, primeiro clone o repositório..."
+  content: "Para configurar o projeto, primeiro clone o repositório...",
+  name: "xxxxxx",
+  description: "yyyyyyy"
 )
 
 Stack.create!(
   title: "Schema Generator",
-  content: "rails generate model User name:string email:string..."
+  content: "rails generate model User name:string email:string...",
+  name: "xxxxxx",
+  description: "yyyyyyy"
 )
+
 
 Stack.create!(
   title: "Seed Example",
-  content: "User.create!(name: 'João Silva', email: 'joao@example.com'...)"
+  content: "User.create!(name: 'João Silva', email: 'joao@example.com'...)",
+  name: "xxxxxx",
+  description: "yyyyyyy"
 )
 
 puts "✅ 3 Stacks criados com sucesso!"
