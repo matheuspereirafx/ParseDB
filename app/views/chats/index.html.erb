@@ -2,9 +2,7 @@
   <!-- SIDEBAR -->
   <aside class="chat-sidebar" id="chatSidebar">
     <div class="sidebar-header">
-      <%= link_to new_stack_chat_path(@stack), class: "new-chat-btn" do %>
-        + Novo Chat
-      <% end %>
+      <%= button_to "+ Novo Chat", stack_chats_path(@stack), method: :post, class: "new-chat-btn" %>
       <button class="sidebar-toggle" id="sidebarClose">✕</button>
     </div>
 
@@ -25,9 +23,7 @@
     <div class="chat-empty">
       <h2>Selecione um chat</h2>
       <p>Escolha um chat na sidebar ou crie um novo para começar.</p>
-      <%= link_to new_stack_chat_path(@stack), class: "new-chat-btn-large" do %>
-        + Novo Chat
-      <% end %>
+      <%= button_to "+ Novo Chat", stack_chats_path(@stack), method: :post, class: "new-chat-btn" %>
     </div>
   </main>
 </div>

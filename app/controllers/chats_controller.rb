@@ -12,18 +12,14 @@ class ChatsController < ApplicationController
     @message = Message.new
   end
 
-  def new
-    @chat = Chat.new
-  end
-
   def create
-    @chat = @stack.chats.new(chat_params)
-    @chat.user = current_user
+    @chat = @stack.chats.new(user: current_user)
+    @chat.title = "Chat #{Time.current.strftime('%d/%m %H:%M')}"
 
     if @chat.save
-      redirect_to stack_chat_path(@stack, @chat), notice: "Chat criado com sucesso!"
+      redirect_to stack_chat_path(@stack, @chat)
     else
-      render :new, status: :unprocessable_entity
+      redirect_to stack_chats_path(@stack), alert: "Erro ao criar chat."
     end
   end
 
@@ -35,9 +31,5 @@ class ChatsController < ApplicationController
 
   def set_chat
     @chat = current_user.chats.find(params[:id])
-  end
-
-  def chat_params
-    params.require(:chat).permit(:title)
   end
 end
