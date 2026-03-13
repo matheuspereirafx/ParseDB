@@ -1,0 +1,39 @@
+<%# app/views/messages/_form.html.erb %>
+<%= form_with model: [chat, Message.new], id: "message-form", local: true, data: { turbo: false } do |f| %>
+  <div class="input-group">
+    <%= f.text_area :content,
+                    class: "form-control",
+                    rows: 2,
+                    placeholder: "Type your message...",
+                    autofocus: true,
+                    required: true %>
+    <%= f.submit "Send", class: "btn btn-primary", data: { disable_with: "Sending..." } %>
+  </div>
+
+  <% if chat&.stack %>
+    <div class="mt-2">
+      <small class="text-muted">
+        Suggestions:
+        <% if chat.stack.name.include?("Seed") %>
+          <button type="button" class="btn btn-link btn-sm p-0 ms-2 suggestion-btn"
+                  data-question="What are seeds in Rails?">🌱 Seeds</button>
+        <% elsif chat.stack.name.include?("Schema") %>
+          <button type="button" class="btn btn-link btn-sm p-0 ms-2 suggestion-btn"
+                  data-question="How to create indexes in PostgreSQL?">🏗️ Indexes</button>
+        <% elsif chat.stack.name.include?("Database") %>
+          <button type="button" class="btn btn-link btn-sm p-0 ms-2 suggestion-btn"
+                  data-question="Difference between SQL and NoSQL?">💾 SQL vs NoSQL</button>
+        <% end %>
+      </small>
+    </div>
+  <% end %>
+<% end %>
+
+<script>
+  document.querySelectorAll('.suggestion-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.getElementById('message_content').value = btn.dataset.question;
+      document.getElementById('message_content').focus();
+    });
+  });
+</script>

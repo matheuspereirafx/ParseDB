@@ -1,12 +1,53 @@
-<h1>Novo Chat</h1>
+<%# app/views/chats/new.html.erb %>
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
 
-<%= form_with model: @chat do |f| %>
-  <div>
-    <%= f.label :title %>
-    <%= f.text_field :title %>
+      <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+          <h4 class="mb-0">➕ New Chat</h4>
+        </div>
+
+        <div class="card-body p-4">
+
+          <%= form_with model: @chat do |f| %>
+
+            <!-- Title Field -->
+            <div class="mb-3">
+              <%= f.label :title, "Chat Title", class: "form-label fw-bold" %>
+              <%= f.text_field :title,
+                  class: "form-control",
+                  placeholder: "e.g., Questions about Seeds",
+                  autofocus: true %>
+              <div class="form-text text-muted small">
+                Choose a descriptive title for your chat
+              </div>
+            </div>
+
+            <!-- Stack Selection - É AQUI QUE AS STACKS APARECEM! -->
+            <div class="mb-4">
+              <%= f.label :stack_id, "Knowledge Stack", class: "form-label fw-bold" %>
+              <%= f.collection_select :stack_id,
+                  Stack.all,                                  # Fonte dos dados
+                  :id,                                        # Valor enviado
+                  :name,                                      # Texto exibido
+                  { prompt: "Select a stack..." },           # Opção inicial
+                  { class: "form-select" } %>               
+              <div class="form-text text-muted small">
+                🌱 Seed | 🏗️ Schema | 💾 Database
+              </div>
+            </div>
+
+            <!-- Buttons -->
+            <div class="d-flex gap-2">
+              <%= link_to "Cancel", chats_path, class: "btn btn-outline-secondary flex-grow-1" %>
+              <%= f.submit "Create Chat", class: "btn btn-primary flex-grow-1" %>
+            </div>
+
+          <% end %>
+        </div>
+      </div>
+
+    </div>
   </div>
-
-  <%= f.submit "Criar Chat" %>
-<% end %>
-
-<%= link_to "Voltar", chats_path %>
+</div>

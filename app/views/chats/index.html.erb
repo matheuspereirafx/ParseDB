@@ -1,8 +1,8 @@
 <%# app/views/chats/index.html.erb %>
 <div class="container mt-4">
-  <h1>Meus Chats</h1>
+  <h1>My Chats</h1>
 
-  <%= link_to "Novo Chat", new_chat_path, class: "btn btn-primary mb-3" %>
+  <%= link_to "New Chat", new_chat_path, class: "btn btn-primary mb-3" %>
 
   <% if @chats.any? %>
     <div class="list-group">
@@ -12,18 +12,21 @@
             <div>
               <h5 class="mb-1"><%= chat.title %></h5>
               <small class="text-muted">
-                Criado em: <%= chat.created_at.strftime("%d/%m/%Y %H:%M") %>
+                Created: <%= chat.created_at.strftime("%Y-%m-%d %H:%M") %>
               </small>
               <% if chat.stack %>
                 <span class="badge bg-info ms-2"><%= chat.stack.name %></span>
               <% end %>
             </div>
-            <small><%= chat.messages.count %> mensagens</small>
+            <small><%= pluralize(chat.messages.count, 'message') %></small>
           </div>
         <% end %>
       <% end %>
     </div>
   <% else %>
-    <p>Você ainda não tem nenhum chat.</p>
+    <div class="alert alert-info text-center">
+      <p class="mb-2">You don't have any chats yet.</p>
+      <%= link_to "Create your first chat!", new_chat_path, class: "btn btn-primary btn-sm" %>
+    </div>
   <% end %>
 </div>
