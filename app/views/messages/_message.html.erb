@@ -1,0 +1,14 @@
+<%# app/views/messages/_message.html.erb %>
+<div class="message mb-3 <%= message.role == 'user' ? 'text-end' : 'text-start' %>"
+     id="<%= dom_id(message) %>">
+  <div class="d-inline-block p-3 rounded <%= message.role == 'user' ? 'bg-primary text-white' : 'bg-light' %>"
+       style="max-width: 80%;">
+    <strong><%= message.role == 'user' ? 'You' : 'DBAgent' %>:</strong>
+    <div class="mt-1">
+      <%= simple_format message.content %>
+    </div>
+    <small class="<%= message.role == 'user' ? 'text-white-50' : 'text-muted' %>">
+      <%= l(message.created_at, format: :short) if message.created_at %>
+    </small>
+  </div>
+</div>

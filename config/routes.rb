@@ -5,9 +5,13 @@ Rails.application.routes.draw do
 
   root "pages#home"
 
-  resources :stacks, only: [:index, :show] do
-    resources :chats, only: [:create, :index, :show, :new] do
-      resources :messages, only: [:create]
-    end
+  resources :stacks, only: [ :index, :show ] do
+    resources :chats, only: [ :create ]
+  end
+
+  # Mínimo necessário para chats funcionarem
+  resources :chats, only: [ :index, :show, :new, :create ] do
+    resources :messages, only: [ :create ]
+    resource :multi_modal, only: [ :create ], controller: "multi_modal"
   end
 end

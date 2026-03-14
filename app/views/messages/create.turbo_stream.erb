@@ -1,0 +1,21 @@
+<%# app/views/messages/create.turbo_stream.erb %>
+
+<%# Adicionar a mensagem do usuário %>
+<%= turbo_stream.append "messages" do %>
+  <%= render @message %>
+<% end %>
+
+<%# Adicionar a resposta do assistente (a última mensagem) %>
+<%= turbo_stream.append "messages" do %>
+  <%= render @chat.messages.where(role: "assistant").last %>
+<% end %>
+
+<%# Limpar o formulário %>
+<%= turbo_stream.replace "message-form" do %>
+  <%= render "messages/form", chat: @chat, message: Message.new %>
+<% end %>
+
+<%# Remover indicador de digitação %>
+<%= turbo_stream.update "typing-indicator" do %>
+  <div id="typing-indicator" style="display: none;"></div>
+<% end %>

@@ -4,13 +4,13 @@
     <%= f.text_area :content,
                     class: "form-control",
                     rows: 2,
-                    placeholder: "Type your message...",
+                    placeholder: "Ask your question...",
                     autofocus: true,
                     required: true %>
     <%= f.submit "Send", class: "btn btn-primary", data: { disable_with: "Sending..." } %>
   </div>
 
-  <% if chat&.stack %>
+  <% if chat.stack %>
     <div class="mt-2">
       <small class="text-muted">
         Suggestions:

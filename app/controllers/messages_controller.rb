@@ -4,14 +4,21 @@ class MessagesController < ApplicationController
   before_action :set_chat
 
   def create
-    @message = @chat.messages.new(message_params)
+    @message = @chat.messages.build(message_params)
     @message.role = "user"
 
     if @message.save
-      redirect_to stack_chat_path(@stack, @chat)
+      ChatService.new(@chat).process_user_message(@message.content)
+
+      respond_to do |format|
+        format.turbo_stream
+        format.html { redirect_to stack_chat_path(@stack, @chat) }
+      end
     else
-      @messages = @chat.messages.order(:created_at)
-      render "chats/show", status: :unprocessable_entity
+      respond_to do |format|
+        format.turbo_stream { render turbo_stream: turbo_stream.replace("message-form", partial: "messages/form", locals: { chat: @chat, message: @message }) }
+        format.html { redirect_to stack_chat_path(@stack, @chat), alert: @message.errors.full_messages.join(", ") }
+      end
     end
   end
 
