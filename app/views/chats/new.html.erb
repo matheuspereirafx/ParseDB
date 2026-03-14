@@ -1,12 +1,8 @@
 <h1>Novo Chat</h1>
 
-<%= form_with model: @chat do |f| %>
-  <div>
-    <%= f.label :title %>
-    <%= f.text_field :title %>
-  </div>
-
-  <%= f.submit "Criar Chat" %>
+<%= simple_form_for [@stack, @chat] do |f| %>
+  <%= f.input :title, label: "Título" %>
+  <%= f.submit "Criar Chat", class: "btn btn-primary" %>
 <% end %>
 
-<%= link_to "Voltar", chats_path %>
+<%= link_to "Voltar", stack_chats_path(@stack) %>
