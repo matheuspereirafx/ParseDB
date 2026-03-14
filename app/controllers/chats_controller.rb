@@ -16,24 +16,17 @@ class ChatsController < ApplicationController
     @chat = @stack.chats.new(user: current_user)
     @chat.title = "Chat #{Time.current.strftime('%d/%m %H:%M')}"
 
-    # 🟢 REMOVA este bloco inteiro - é desnecessário e causa erro
-    # if Stack.exists?
-    #   @chat.stacks_id = Stack.first.id
-    # else
-    #   flash[:alert] = "Crie um stack primeiro antes de criar um chat"
-    #   redirect_to new_chat_path and return
-    # end
-
     if @chat.save
-      redirect_to stack_chat_path(@stack, @chat)
+      # ✅ CORREÇÃO: redirecionar para a página do chat
+      redirect_to stack_chat_path(@stack, @chat), notice: "Chat criado com sucesso!"
     else
-      redirect_to stack_chats_path(@stack), alert: "Erro ao criar chat."
+      redirect_to stack_chats_path(@stack), alert: "Erro ao criar chat: #{@chat.errors.full_messages.join(', ')}"
     end
   end
 
   def update
     if @chat.update(chat_params)
-      redirect_to stack_chat_path(@stack, @chat)
+      redirect_to stack_chat_path(@stack, @chat), notice: "Chat atualizado!"
     else
       redirect_to stack_chat_path(@stack, @chat), alert: "Erro ao atualizar."
     end
@@ -51,7 +44,7 @@ class ChatsController < ApplicationController
   end
 
   def set_chat
-    @chat = Chat.find(params[:id])
+    @chat = current_user.chats.find(params[:id])
   end
 
   def chat_params
