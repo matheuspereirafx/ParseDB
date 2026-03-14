@@ -10,3 +10,13 @@
 // Your CSS partials
 @import "components/index";
 @import "pages/index";
+@import "components/navbar";
+@import "components/auth";
+@import "pages/stacks";
+
+// Global layout fix for fixed navbar
+body {
+  padding-top: 70px;
+  margin: 0;
+  background: #0a0a0f;
+}

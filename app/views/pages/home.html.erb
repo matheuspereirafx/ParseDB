@@ -1,2 +1,35 @@
-<h1>Pages#home</h1>
-<p>Find me in app/views/pages/home.html.erb</p>
+<div class="sf-page">
+  <div class="sf-glow"></div>
+
+  <!-- HERO -->
+  <section class="sf-hero">
+    <div class="sf-badge">
+      <span class="sf-badge-dot"></span>
+      AI-Powered · Built for Le Wagon
+    </div>
+    <h1>
+      Your Project<br>
+      <span class="sf-gradient-text">In Minutes</span>
+    </h1>
+    <p class="sf-hero-subtitle">
+      Write user stories and get your schema, realistic seed data and Le Wagon-ready XML. All powered by AI.
+    </p>
+    <div class="sf-hero-buttons">
+      <%= link_to "#", class: "sf-btn-primary" do %>
+        🗂️ Schema
+      <% end %>
+      <%= link_to "#", class: "sf-btn-primary" do %>
+        🌱 Seeds
+      <% end %>
+      <%= link_to "#", class: "sf-btn-primary" do %>
+        📄 DataBase
+      <% end %>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="sf-footer">
+    Feito com 💜 pela Equipe ParseDB · Le Wagon 2026 ·
+    <%= link_to "GitHub", "https://github.com/matheuspereirafx/ParseDB", target: "_blank" %>
+  </footer>
+</div>

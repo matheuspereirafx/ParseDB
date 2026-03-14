@@ -1,6 +1,26 @@
-<% @stacks.each do |stack| %>
-  <div class="stack">
-    <h3><%= stack.title %></h3>
-    <%= link_to "Abrir", stack_path(stack) %>
-  </div>
-<% end %>
+<div class="sf-page">
+  <div class="sf-glow"></div>
+
+  <section class="sf-stacks-section">
+    <h1 class="sf-stacks-title">Choose your tool</h1>
+    <p class="sf-stacks-subtitle">Select a stack to get started</p>
+
+    <div class="sf-stacks-grid">
+      <% @stacks.each do |stack| %>
+        <div class="sf-stack-card">
+          <span class="sf-stack-icon">
+            <% if stack.title.downcase.include?("schema") %>
+              🗂️
+            <% elsif stack.title.downcase.include?("seed") %>
+              🌱
+            <% else %>
+              📄
+            <% end %>
+          </span>
+          <h5 class="sf-stack-name"><%= stack.title %></h5>
+          <%= link_to "Abrir", stack_path(stack), class: "sf-btn-primary" %>
+        </div>
+      <% end %>
+    </div>
+  </section>
+</div>
