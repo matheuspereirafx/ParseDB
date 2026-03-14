@@ -1,12 +1,15 @@
-require 'ostruct' 
+require 'ostruct'
+
+# app/services/chat_service.rb
 class ChatService
-  SYSTEM_PROMPT = "You are a Database Teaching Assistant specialized in Seed Data, Schema Design, and Database Systems.\n\nAnswer concisely in Markdown with code examples."
+  SYSTEM_PROMPT = "You are an expert Database Teaching Assistant with deep specialization in: - Seed Data: Generating realistic test data, data factories, and fixture management - Schema Design: Normalization, denormalization, indexing strategies, and relationships - Database Systems: SQL/NoSQL trade-offs, query optimization, and performance tuning Your teaching style: - Explain concepts with practical, real-world examples - Provide executable code snippets in SQL, Ruby, or relevant DB languages - Break down complex topics into digestible chunks - Highlight best practices and common pitfalls - Use markdown formatting with clear section headers and syntax highlighting When responding: 1. Start with a brief, direct answer to the question 2. Include at least one concrete code example 3. Explain the 'why' behind recommendations 4. Suggest alternative approaches when relevant 5. End with a key takeaway or best practice tip Tone: Professional yet approachable, like a senior developer mentoring a junior colleague."
 
   def initialize(chat)
     @chat = chat
+    # Modelo com cotas mais altas
     @client = RubyLLM.chat(model: 'gemini-2.5-flash-lite')
                      .with_instructions(SYSTEM_PROMPT)
-    @model_name = 'gemini-2.5-flash-lite'
+    @model_name = 'gemini-2.0-flash'
   end
 
   def process_user_message(user_message)
@@ -38,7 +41,9 @@ class ChatService
       # PASSO 3: Atualizar uso com sucesso
       update_successful_usage(rate_limit)
 
-      # Retornar resposta normal
+      # Broadcast da resposta normal
+      broadcast_message(assistant_msg)
+
       assistant_msg
 
     rescue RubyLLM::RateLimitError => e
@@ -61,7 +66,65 @@ class ChatService
     end
   end
 
-  # NOVOS MÉTODOS PARA RATE LIMIT
+  # ==================== BROADCAST METHODS ====================
+
+  def broadcast_message(message)
+    Turbo::StreamsChannel.broadcast_append_to(
+      "chat_#{@chat.id}",
+      target: "messages-container",
+      partial: "messages/assistant_message",
+      locals: { message: message }
+    )
+
+    hide_typing_indicator
+  end
+
+  def broadcast_error_message(content)
+    # Criar ID temporário
+    temp_id = "temp-#{SecureRandom.hex(4)}"
+
+    # HTML da mensagem de erro
+    html = <<-HTML
+      <div class="message assistant" id="#{temp_id}">
+        <div class="avatar">🤖</div>
+        <div>
+          <div class="bubble error-message">
+            #{simple_format(content)}
+          </div>
+          <div class="message-meta">
+            Assistente · agora
+            <span class="badge bg-warning text-dark ms-2">⏳ Enfileirado</span>
+          </div>
+        </div>
+      </div>
+    HTML
+
+    # Broadcast via Turbo
+    Turbo::StreamsChannel.broadcast_append_to(
+      "chat_#{@chat.id}",
+      target: "messages-container",
+      html: html
+    )
+
+    # Esconder indicador de digitação
+    hide_typing_indicator
+
+    # Remover a mensagem temporária após 10 segundos (opcional)
+    Turbo::StreamsChannel.broadcast_remove_to(
+      "chat_#{@chat.id}",
+      target: temp_id
+    )
+  end
+
+  def hide_typing_indicator
+    Turbo::StreamsChannel.broadcast_update_to(
+      "chat_#{@chat.id}",
+      target: "typing-indicator",
+      html: '<div id="typing-indicator" style="display: none;"></div>'
+    )
+  end
+
+  # ==================== RATE LIMIT HANDLERS ====================
 
   def handle_rate_limit_error(user_message, error)
     # Atualizar tracking do rate limit
@@ -81,11 +144,18 @@ class ChatService
       retry_in: rate_limit&.time_until_allowed || 20
     )
 
+    error_message = "⚠️ **Rate limit atingido!**\n\n" \
+                    "Sua mensagem foi enfileirada e será reenviada automaticamente em " \
+                    "#{rate_limit&.time_until_allowed || 20} segundos.\n\n" \
+                    "ID da fila: `#{failed_call.id}`"
+
     Rails.logger.warn "Rate limit error for chat #{@chat.id}: #{error.message}"
 
-    # Retornar objeto que imita uma mensagem de erro
+    # Broadcast da mensagem de erro
+    broadcast_error_message(error_message)
+
     OpenStruct.new(
-      content: "⚠️ **Rate limit atingido!**\n\nSua mensagem foi enfileirada e será reenviada automaticamente em #{rate_limit&.time_until_allowed || 20} segundos.\n\nID da fila: `#{failed_call.id}`",
+      content: error_message,
       role: "assistant",
       id: nil,
       persisted?: false
@@ -107,8 +177,16 @@ class ChatService
       retry_in: wait_time
     )
 
+    error_message = "⏳ **Serviço ocupado**\n\n" \
+                    "O limite de requisições foi atingido. Sua mensagem foi enfileirada " \
+                    "e será processada automaticamente em #{wait_time} segundos.\n\n" \
+                    "ID da fila: `#{failed_call.id}`"
+
+    # Broadcast da mensagem de erro
+    broadcast_error_message(error_message)
+
     OpenStruct.new(
-      content: "⏳ **Serviço ocupado**\n\nO limite de requisições foi atingido. Sua mensagem foi enfileirada e será processada automaticamente em #{wait_time} segundos.\n\nID da fila: `#{failed_call.id}`",
+      content: error_message,
       role: "assistant",
       id: nil,
       persisted?: false
@@ -129,10 +207,18 @@ class ChatService
       retry_in: 5
     )
 
+    error_message = "🔄 **Erro temporário**\n\n" \
+                    "Ocorreu um erro temporário: `#{error.message}`\n\n" \
+                    "Sua mensagem foi enfileirada e será reenviada em 5 segundos.\n\n" \
+                    "ID da fila: `#{failed_call.id}`"
+
     Rails.logger.error "Error in chat #{@chat.id}: #{error.message}"
 
+    # Broadcast da mensagem de erro
+    broadcast_error_message(error_message)
+
     OpenStruct.new(
-      content: "🔄 **Erro temporário**\n\nOcorreu um erro temporário: `#{error.message}`\n\nSua mensagem foi enfileirada e será reenviada em 5 segundos.\n\nID da fila: `#{failed_call.id}`",
+      content: error_message,
       role: "assistant",
       id: nil,
       persisted?: false
@@ -152,5 +238,7 @@ class ChatService
         current_usage: 1
       )
     end
+  rescue => e
+    Rails.logger.error "Failed to update rate limit usage: #{e.message}"
   end
 end

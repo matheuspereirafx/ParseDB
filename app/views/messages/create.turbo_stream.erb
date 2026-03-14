@@ -1,32 +1,56 @@
-<%# Adicionar a mensagem do usuário (sempre existe) %>
-<%= turbo_stream.append "messages" do %>
-  <%= render @message %>
+<%# app/views/messages/create.turbo_stream.erb %>
+
+<%# Adicionar mensagem do usuário %>
+<%= turbo_stream.append "messages-container" do %>
+  <div class="mb-3 text-end" id="<%= dom_id(@message) %>">
+    <div class="bg-primary text-white d-inline-block p-3 rounded-3" style="max-width: 75%;">
+      <small class="text-white-50 d-block mb-1">
+        👤 Você · <%= @message.created_at.strftime('%H:%M') %>
+      </small>
+      <div class="message-content">
+        <%= simple_format(@message.content) %>
+      </div>
+    </div>
+  </div>
 <% end %>
 
-<%# Verificar se existe resposta do assistente (pode ser nil em caso de rate limit) %>
-<% if @message.chat.messages.where(role: "assistant").last.present? %>
-  <%= turbo_stream.append "messages" do %>
-    <%= render @message.chat.messages.where(role: "assistant").last %>
-  <% end %>
+<%# Mostrar indicador de digitação %>
+<%= turbo_stream.update "typing-indicator" do %>
+  <div id="typing-indicator" style="display: block;">
+    <div class="mb-3">
+      <div class="bg-light d-inline-block p-3 rounded-3">
+        <small class="text-muted d-block mb-1">🤖 Assistente · agora</small>
+        <div class="typing-animation">
+          <span></span><span></span><span></span>
+        </div>
+      </div>
+    </div>
+  </div>
 <% end %>
 
-<%# Se houver flash warning (rate limit), mostrar %>
-<% if flash[:warning].present? %>
-  <%= turbo_stream.replace "flashes" do %>
-    <%= render "shared/flashes" %>
-  <% end %>
-<% end %>
-
-<%# Limpar o formulário %>
+<%# Limpar formulário %>
 <%= turbo_stream.replace "message-form" do %>
-  <%= form_with(model: [@chat.stack, @chat, Message.new],
+  <%= form_with url: stack_chat_messages_path(@chat.stack, @chat),
+                method: :post,
+                data: { turbo_stream: true },
                 class: "d-flex",
-                id: "message-form") do |form| %>
-    <%= form.text_area :content,
-                      class: "form-control me-2",
-                      rows: 2,
-                      placeholder: "Digite sua mensagem...",
-                      required: true %>
-    <%= form.submit "Enviar", class: "btn btn-primary align-self-start" %>
+                id: "message-form" do |f| %>
+
+    <%= f.text_area :content,
+                    class: "form-control me-2",
+                    rows: 2,
+                    placeholder: "Digite sua mensagem...",
+                    required: true,
+                    id: "message-content" %>
+
+    <%= f.submit "Enviar", class: "btn btn-primary align-self-start" %>
   <% end %>
 <% end %>
+
+<!-- Rolar para o final -->
+<script>
+  setTimeout(function() {
+    const container = document.getElementById('messages');
+    if (container) container.scrollTop = container.scrollHeight;
+  }, 50);
+</script>
