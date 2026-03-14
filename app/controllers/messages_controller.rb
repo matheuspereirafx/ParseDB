@@ -8,7 +8,13 @@ class MessagesController < ApplicationController
     @message.role = "user"
 
     if @message.save
-      ChatService.new(@chat).process_user_message(@message.content)
+      # Chama o serviço e guarda o resultado
+      result = ChatService.new(@chat).process_user_message(@message.content)
+
+      # Se o resultado for um OpenStruct (mensagem enfileirada), cria um flash
+      if result.is_a?(OpenStruct) && result.content.include?("enfileirada")
+        flash[:warning] = result.content
+      end
 
       respond_to do |format|
         format.turbo_stream
@@ -16,8 +22,16 @@ class MessagesController < ApplicationController
       end
     else
       respond_to do |format|
-        format.turbo_stream { render turbo_stream: turbo_stream.replace("message-form", partial: "messages/form", locals: { chat: @chat, message: @message }) }
-        format.html { redirect_to stack_chat_path(@stack, @chat), alert: @message.errors.full_messages.join(", ") }
+        format.turbo_stream {
+          render turbo_stream: turbo_stream.replace("message-form",
+            partial: "messages/form",
+            locals: { chat: @chat, message: @message }
+          )
+        }
+        format.html {
+          redirect_to stack_chat_path(@stack, @chat),
+          alert: @message.errors.full_messages.join(", ")
+        }
       end
     end
   end

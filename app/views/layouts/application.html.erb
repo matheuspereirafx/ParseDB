@@ -26,11 +26,18 @@
   <body>
     <%= render "shared/navbar" %>
     <%= render "shared/flashes" %>
-    <%= yield %>
 
-    <footer class="sf-footer">
-      Feito com 💜 pela Equipe ParseDB · Le Wagon 2026 ·
-      <%= link_to "GitHub", "https://github.com/matheuspereirafx/ParseDB", target: "_blank" %>
+    <main class="container mt-4">
+      <%= yield %>
+    </main>
+
+    <footer class="sf-footer mt-5 py-3 text-center bg-light">
+      <div class="container">
+        <p class="mb-0">
+          Feito com 💜 pela Equipe ParseDB · Le Wagon 2026 ·
+          <%= link_to "GitHub", "https://github.com/matheuspereirafx/ParseDB", target: "_blank", class: "text-decoration-none" %>
+        </p>
+      </div>
     </footer>
   </body>
 </html>

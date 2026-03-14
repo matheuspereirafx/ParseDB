@@ -1,21 +1,32 @@
-<%# app/views/messages/create.turbo_stream.erb %>
-
-<%# Adicionar a mensagem do usuário %>
+<%# Adicionar a mensagem do usuário (sempre existe) %>
 <%= turbo_stream.append "messages" do %>
   <%= render @message %>
 <% end %>
 
-<%# Adicionar a resposta do assistente (a última mensagem) %>
-<%= turbo_stream.append "messages" do %>
-  <%= render @chat.messages.where(role: "assistant").last %>
+<%# Verificar se existe resposta do assistente (pode ser nil em caso de rate limit) %>
+<% if @message.chat.messages.where(role: "assistant").last.present? %>
+  <%= turbo_stream.append "messages" do %>
+    <%= render @message.chat.messages.where(role: "assistant").last %>
+  <% end %>
+<% end %>
+
+<%# Se houver flash warning (rate limit), mostrar %>
+<% if flash[:warning].present? %>
+  <%= turbo_stream.replace "flashes" do %>
+    <%= render "shared/flashes" %>
+  <% end %>
 <% end %>
 
 <%# Limpar o formulário %>
 <%= turbo_stream.replace "message-form" do %>
-  <%= render "messages/form", chat: @chat, message: Message.new %>
-<% end %>
-
-<%# Remover indicador de digitação %>
-<%= turbo_stream.update "typing-indicator" do %>
-  <div id="typing-indicator" style="display: none;"></div>
+  <%= form_with(model: [@chat.stack, @chat, Message.new],
+                class: "d-flex",
+                id: "message-form") do |form| %>
+    <%= form.text_area :content,
+                      class: "form-control me-2",
+                      rows: 2,
+                      placeholder: "Digite sua mensagem...",
+                      required: true %>
+    <%= form.submit "Enviar", class: "btn btn-primary align-self-start" %>
+  <% end %>
 <% end %>

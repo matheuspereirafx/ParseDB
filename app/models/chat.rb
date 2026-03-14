@@ -1,6 +1,6 @@
 class Chat < ApplicationRecord
   belongs_to :user
-  belongs_to :stack, foreign_key: "stacks_id", optional: true
+  belongs_to :stack  # 👈 REMOVA foreign_key: "stacks_id"
   has_many :messages, dependent: :destroy
 
   validates :title, presence: true

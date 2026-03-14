@@ -1,68 +1,75 @@
-<%# app/views/chats/show.html.erb %>
-<div class="container mt-4">
-  <div class="row justify-content-center">
-    <div class="col-md-8">
-
+<div class="container py-4">
+  <div class="row">
+    <div class="col-md-8 offset-md-2">
       <!-- Cabeçalho do Chat -->
-      <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="h3 mb-0"><%= @chat.title %></h1>
-        <%= link_to "← Voltar", chats_path, class: "btn btn-outline-secondary btn-sm" %>
-      </div>
-
-      <!-- Área de Mensagens -->
-      <div class="card shadow-sm mb-4">
-        <div class="card-header bg-primary text-white">
-          <h5 class="mb-0">💬 Chat</h5>
+      <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h4 class="mb-0"><%= @chat.title %></h4>
+          <%= link_to "Voltar", stack_chats_path(@chat.stack), class: "btn btn-sm btn-outline-secondary" %>
         </div>
 
-        <div class="card-body" style="height: 400px; overflow-y: auto;" id="messages">
-          <% if @messages.any? %>
+        <!-- Lista de Mensagens -->
+        <div class="card-body" style="height: 500px; overflow-y: auto;" id="messages">
+          <% if @messages.present? %>
             <% @messages.each do |message| %>
-              <div class="mb-3 <%= message.role == 'user' ? 'text-end' : 'text-start' %>">
-                <div class="d-inline-block p-3 rounded-3 <%= message.role == 'user' ? 'bg-primary text-white' : 'bg-light' %>"
-                     style="max-width: 75%;">
-                  <strong><%= message.role == 'user' ? '👤 Você' : '🤖 Assistente' %>:</strong>
-                  <p class="mb-0 mt-1"><%= message.content %></p>
-                  <small class="<%= message.role == 'user' ? 'text-white-50' : 'text-muted' %> d-block mt-1">
-                    <%= l(message.created_at, format: :short) if message.created_at %>
+              <div class="mb-3 <%= 'text-end' if message.role == 'user' %>">
+                <div class="<%= message.role == 'user' ? 'bg-primary text-white' : 'bg-light' %>
+                            d-inline-block p-3 rounded-3" style="max-width: 75%;">
+
+                  <!-- Cabeçalho da mensagem -->
+                  <small class="<%= message.role == 'user' ? 'text-white-50' : 'text-muted' %> d-block mb-1">
+                    <% if message.role == 'user' %>
+                      👤 Você · <%= message.created_at.strftime('%H:%M') %>
+                    <% else %>
+                      🤖 Assistente · <%= message.created_at.strftime('%H:%M') %>
+                    <% end %>
                   </small>
+
+                  <!-- Conteúdo da mensagem -->
+                  <p class="mb-0"><%= simple_format(message.content) %></p>
                 </div>
               </div>
             <% end %>
           <% else %>
             <div class="text-center text-muted py-5">
-              <h4>👋 Olá!</h4>
-              <p>Comece a conversa enviando uma mensagem abaixo.</p>
+              <p>Nenhuma mensagem ainda. Comece a conversa!</p>
             </div>
           <% end %>
         </div>
 
-        <!-- Formulário de Mensagem -->
-        <div class="card-footer bg-white">
-          <%= form_with model: [@chat, Message.new], class: "d-flex gap-2" do |f| %>
-            <div class="flex-grow-1">
-              <%= f.text_area :content,
-                              class: "form-control",
-                              rows: 2,
-                              placeholder: "Digite sua mensagem...",
-                              autofocus: true,
-                              required: true %>
-            </div>
-            <div>
-              <%= f.submit "Enviar", class: "btn btn-primary h-100" %>
-            </div>
-          <% end %>
+        <!-- FORMULÁRIO HTML PURO - OPÇÃO 3 -->
+        <div class="card-footer">
+          <form action="<%= stack_chat_messages_path(@chat.stack, @chat) %>"
+                method="post"
+                class="d-flex">
+
+            <!-- Token de autenticidade obrigatório do Rails -->
+            <input type="hidden"
+                   name="authenticity_token"
+                   value="<%= form_authenticity_token %>">
+
+            <!-- Campo de mensagem - nome OBRIGATÓRIO: message[content] -->
+            <textarea name="message[content]"
+                      class="form-control me-2"
+                      rows="2"
+                      placeholder="Digite sua mensagem..."
+                      required></textarea>
+
+            <!-- Botão de envio -->
+            <button type="submit" class="btn btn-primary align-self-start">
+              Enviar
+            </button>
+          </form>
         </div>
       </div>
-
     </div>
   </div>
 </div>
 
-<!-- Auto-scroll para nova mensagem -->
+<!-- Scroll automático para o final -->
 <script>
-  document.addEventListener("turbo:load", function() {
-    const messagesDiv = document.getElementById('messages');
+  document.addEventListener("DOMContentLoaded", function() {
+    var messagesDiv = document.getElementById("messages");
     if (messagesDiv) {
       messagesDiv.scrollTop = messagesDiv.scrollHeight;
     }
