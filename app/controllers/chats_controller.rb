@@ -16,12 +16,13 @@ class ChatsController < ApplicationController
     @chat = @stack.chats.new(user: current_user)
     @chat.title = "Chat #{Time.current.strftime('%d/%m %H:%M')}"
 
-    if Stack.exists?
-      @chat.stacks_id = Stack.first.id
-    else
-      flash[:alert] = "Crie um stack primeiro antes de criar um chat"
-      redirect_to new_chat_path and return
-    end
+    # 🟢 REMOVA este bloco inteiro - é desnecessário e causa erro
+    # if Stack.exists?
+    #   @chat.stacks_id = Stack.first.id
+    # else
+    #   flash[:alert] = "Crie um stack primeiro antes de criar um chat"
+    #   redirect_to new_chat_path and return
+    # end
 
     if @chat.save
       redirect_to stack_chat_path(@stack, @chat)
