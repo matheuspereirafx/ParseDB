@@ -5,11 +5,14 @@ Rails.application.routes.draw do
 
   root "pages#home"
 
+  # Rotas para Stacks com chats aninhados
   resources :stacks, only: [ :index, :show ] do
-    resources :chats, only: [ :create ]
+    resources :chats, only: [ :index, :show, :create ] do  # ✅ Adicione :show aqui
+      resources :messages, only: [ :create ]
+    end
   end
 
-  # Mínimo necessário para chats funcionarem
+  # Rotas globais para chats (sem stack aninhado)
   resources :chats, only: [ :index, :show, :new, :create ] do
     resources :messages, only: [ :create ]
     resource :multi_modal, only: [ :create ], controller: "multi_modal"
