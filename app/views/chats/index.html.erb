@@ -44,11 +44,6 @@
 
 <script>
   (function() {
-    // Scroll mensagens
-    const messages = document.getElementById('messages');
-    if (messages) messages.scrollTop = messages.scrollHeight;
-
-    // Sidebar toggle
     const sidebar = document.getElementById('chatSidebar');
     const openBtn = document.getElementById('sidebarOpen');
     const closeBtn = document.getElementById('sidebarClose');
@@ -67,14 +62,12 @@
       });
     }
 
-    // Fecha menus ao clicar fora
     document.addEventListener('click', (e) => {
       if (!e.target.closest('.chat-item-menu')) {
         document.querySelectorAll('.chat-menu-dropdown.open').forEach(el => el.classList.remove('open'));
       }
     });
 
-    // Toggle menu dos 3 pontos
     document.querySelectorAll('.chat-menu-btn').forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.preventDefault();
@@ -87,7 +80,6 @@
       });
     });
 
-    // Renomear chat
     const sidebarChats = document.querySelector('.sidebar-chats');
     const basePath = sidebarChats ? sidebarChats.dataset.basePath : '';
 
