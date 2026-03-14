@@ -5,9 +5,6 @@ Rails.application.routes.draw do
 
   root "pages#home"
 
-  resources :stacks, only: [:index, :show] do
-    resources :chats, only: [:create, :index, :show, :new] do
-      resources :messages, only: [:create]
-    end
+
   end
 end
