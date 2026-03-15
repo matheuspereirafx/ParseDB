@@ -1,8 +1,9 @@
 # app/models/message.rb
 class Message < ApplicationRecord
   belongs_to :chat
+  belongs_to :user
 
-  MAX_USER_MESSAGES = 10
+  MAX_USER_MESSAGES = 100
 
   validates :content, presence: true
   validates :role, presence: true, inclusion: { in: [ "user", "assistant" ] }

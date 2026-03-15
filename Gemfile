@@ -70,6 +70,6 @@ group :test do
   gem "selenium-webdriver"
 end
 
-gem "ruby_llm", "~> 1.13"
+gem 'ruby_llm', '~> 1.7'
 
 gem "dotenv-rails", "~> 3.2"

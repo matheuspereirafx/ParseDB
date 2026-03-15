@@ -1,15 +1,22 @@
+# app/models/chat.rb
 class Chat < ApplicationRecord
+  belongs_to :stack
   belongs_to :user
-  belongs_to :stack, foreign_key: "stacks_id", optional: true
   has_many :messages, dependent: :destroy
 
   validates :title, presence: true
+  validates :topic, presence: true  # Tópico é obrigatório
 
-  before_validation :set_default_title, on: :create
+  TOPICS = [
+    'Seed Data',
+    'Schema Design',
+    'Database Setup',
+    'Indexes',
+    'Migrations',
+    'Associations',
+    'Performance',
+    'Backup/Restore'
+  ].freeze
 
-  private
-
-  def set_default_title
-    self.title ||= "Chat #{Time.current.strftime('%d/%m %H:%M')}"
-  end
+  validates :topic, inclusion: { in: TOPICS, allow_blank: false }
 end

@@ -1,21 +1,42 @@
 <%# app/views/messages/create.turbo_stream.erb %>
 
-<%# Adicionar a mensagem do usuário %>
+<%# Mensagens %>
 <%= turbo_stream.append "messages" do %>
   <%= render @message %>
 <% end %>
 
-<%# Adicionar a resposta do assistente (a última mensagem) %>
 <%= turbo_stream.append "messages" do %>
-  <%= render @chat.messages.where(role: "assistant").last %>
+  <%= render @assistant_message %>
 <% end %>
 
-<%# Limpar o formulário %>
+<%# SUBSTITUIR O FORMULÁRIO POR UM NOVO (LIMPO) %>
 <%= turbo_stream.replace "message-form" do %>
-  <%= render "messages/form", chat: @chat, message: Message.new %>
+  <%= form_with model: [@stack, :chat, Message.new],
+                id: "message-form",
+                class: "d-flex gap-2",
+                data: { controller: "message-form" } do |f| %>
+    <div class="flex-grow-1">
+      <%= f.text_area :content,
+                      class: "form-control",
+                      rows: 2,
+                      placeholder: "Type your message...",
+                      autofocus: true,
+                      required: true,
+                      id: "message_content",
+                      data: { message_form_target: "input" } %>
+    </div>
+    <div>
+      <%= f.submit "Send",
+                   class: "btn btn-primary h-100",
+                   data: { disable_with: "Sending..." } %>
+    </div>
+  <% end %>
 <% end %>
 
-<%# Remover indicador de digitação %>
-<%= turbo_stream.update "typing-indicator" do %>
-  <div id="typing-indicator" style="display: none;"></div>
+<%# Scroll %>
+<%= turbo_stream.append "scripts" do %>
+  <script>
+    const messagesDiv = document.getElementById('messages');
+    if (messagesDiv) messagesDiv.scrollTop = messagesDiv.scrollHeight;
+  </script>
 <% end %>

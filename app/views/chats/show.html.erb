@@ -3,26 +3,33 @@
   <div class="row justify-content-center">
     <div class="col-md-8">
 
-      <!-- Cabeçalho do Chat -->
+      <!-- Chat Header -->
       <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="h3 mb-0"><%= @chat.title %></h1>
-        <%= link_to "← Voltar", chats_path, class: "btn btn-outline-secondary btn-sm" %>
+        <div>
+          <h1 class="h3 mb-0"><%= @chat.title %></h1>
+          <small class="text-muted">Stack: <%= @stack.name %></small>
+        </div>
+        <%= link_to "← Back to Stacks", stacks_path, class: "btn btn-outline-secondary btn-sm" %>
       </div>
 
-      <!-- Área de Mensagens -->
+      <!-- Messages Area -->
       <div class="card shadow-sm mb-4">
-        <div class="card-header bg-primary text-white">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
           <h5 class="mb-0">💬 Chat</h5>
+          <span class="badge bg-light text-dark">
+            <%= pluralize(@messages.count, "message") %>
+          </span>
         </div>
 
         <div class="card-body" style="height: 400px; overflow-y: auto;" id="messages">
           <% if @messages.any? %>
             <% @messages.each do |message| %>
-              <div class="mb-3 <%= message.role == 'user' ? 'text-end' : 'text-start' %>">
+              <div class="mb-3 <%= message.role == 'user' ? 'text-end' : 'text-start' %>"
+                   id="<%= dom_id(message) %>">
                 <div class="d-inline-block p-3 rounded-3 <%= message.role == 'user' ? 'bg-primary text-white' : 'bg-light' %>"
                      style="max-width: 75%;">
-                  <strong><%= message.role == 'user' ? '👤 Você' : '🤖 Assistente' %>:</strong>
-                  <p class="mb-0 mt-1"><%= message.content %></p>
+                  <strong><%= message.role == 'user' ? '👤 You' : '🤖 Assistant' %>:</strong>
+                  <div class="mb-0 mt-1"><%= simple_format(message.content) %></div>
                   <small class="<%= message.role == 'user' ? 'text-white-50' : 'text-muted' %> d-block mt-1">
                     <%= l(message.created_at, format: :short) if message.created_at %>
                   </small>
@@ -31,40 +38,79 @@
             <% end %>
           <% else %>
             <div class="text-center text-muted py-5">
-              <h4>👋 Olá!</h4>
-              <p>Comece a conversa enviando uma mensagem abaixo.</p>
+              <h4>👋 Welcome to <strong><%= @stack.name %></strong> chat!</h4>
+              <p>Start the conversation by sending a message below.</p>
             </div>
           <% end %>
         </div>
 
-        <!-- Formulário de Mensagem -->
-        <div class="card-footer bg-white">
-          <%= form_with model: [@chat, Message.new], class: "d-flex gap-2" do |f| %>
-            <div class="flex-grow-1">
-              <%= f.text_area :content,
-                              class: "form-control",
-                              rows: 2,
-                              placeholder: "Digite sua mensagem...",
-                              autofocus: true,
-                              required: true %>
-            </div>
-            <div>
-              <%= f.submit "Enviar", class: "btn btn-primary h-100" %>
-            </div>
-          <% end %>
-        </div>
+        
+        <!-- Message Form - CORRIGIDO com ID no textarea -->
+              <div class="card-footer bg-white">
+                <%= form_with model: [@stack, :chat, Message.new],
+                              id: "message-form",
+                              class: "d-flex gap-2",
+                              data: { controller: "message-form" } do |f| %>
+                  <div class="flex-grow-1">
+                    <%= f.text_area :content,
+                                    class: "form-control",
+                                    rows: 2,
+                                    placeholder: "Type your message...",
+                                    autofocus: true,
+                                    required: true,
+                                    id: "message_content",  # ← ADICIONAR ESTA LINHA!
+                                    data: { message_form_target: "input" } %>
+                  </div>
+                  <div>
+                    <%= f.submit "Send",
+                                class: "btn btn-primary h-100",
+                                data: { disable_with: "Sending..." } %>
+                  </div>
+                <% end %>
+              </div>
+      <!-- Keyboard Shortcut -->
+      <div class="text-center text-muted small">
+        <kbd>Enter</kbd> to send · <kbd>Shift</kbd> + <kbd>Enter</kbd> for new line
       </div>
 
     </div>
   </div>
 </div>
 
-<!-- Auto-scroll para nova mensagem -->
+<!-- Auto-scroll improved -->
 <script>
   document.addEventListener("turbo:load", function() {
     const messagesDiv = document.getElementById('messages');
     if (messagesDiv) {
       messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
+      const observer = new MutationObserver(() => {
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+      });
+
+      observer.observe(messagesDiv, { childList: true, subtree: true });
+    }
+  });
+
+  document.addEventListener("keydown", function(e) {
+    if (e.key === "Enter" && !e.shiftKey) {
+      const textarea = document.querySelector('textarea[name="message[content]"]');
+      const form = textarea?.closest('form');
+
+      if (textarea && form && document.activeElement === textarea) {
+        e.preventDefault();
+        form.requestSubmit();
+      }
     }
   });
 </script>
+
+<style>
+  kbd {
+    background: #f7f7f9;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    padding: 2px 4px;
+    font-size: 0.85em;
+  }
+</style>

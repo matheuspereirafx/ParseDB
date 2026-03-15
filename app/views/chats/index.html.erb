@@ -1,28 +1,57 @@
+<%# app/views/chats/index.html.erb %>
+
 <div class="chat-layout">
   <!-- SIDEBAR -->
   <aside class="chat-sidebar" id="chatSidebar">
     <div class="sidebar-header">
-      <%= button_to "+ Novo Chat", stack_chats_path(@stack), method: :post, class: "new-chat-btn" %>
+      <% if @stack %>
+        <%= button_to "+ Novo Chat", stack_chats_path(@stack), method: :post, class: "new-chat-btn" %>
+      <% else %>
+        <%= button_to "+ Novo Chat", chats_path, method: :post, class: "new-chat-btn" %>
+      <% end %>
       <button class="sidebar-toggle" id="sidebarClose">✕</button>
     </div>
 
-    <div class="sidebar-chats" data-base-path="<%= stack_chats_path(@stack) %>">
-      <% @stack.chats.where(user: current_user).order(updated_at: :desc).each do |chat| %>
+    <div class="sidebar-chats"
+         data-stack-id="<%= @stack&.id %>"
+         data-base-path="<%= @stack ? stack_chats_path(@stack) : chats_path %>">
+
+      <% @chats.each do |chat| %>
         <div class="sidebar-chat-item-wrapper">
-          <%= link_to stack_chat_path(@stack, chat),
-              class: "sidebar-chat-item #{'active' if defined?(@chat) && chat == @chat}" do %>
-            <span class="chat-item-title"><%= chat.title %></span>
-            <span class="chat-item-meta"><%= chat.messages.count %> msgs</span>
+          <% if @stack %>
+            <%= link_to stack_chat_path(@stack, chat),
+                class: "sidebar-chat-item #{'active' if defined?(@chat) && chat == @chat}" do %>
+              <span class="chat-item-title"><%= chat.title %></span>
+              <span class="chat-item-meta"><%= chat.messages.count %> msgs</span>
+            <% end %>
+          <% else %>
+            <%= link_to chat_path(chat),
+                class: "sidebar-chat-item #{'active' if defined?(@chat) && chat == @chat}" do %>
+              <span class="chat-item-title"><%= chat.title %></span>
+              <span class="chat-item-meta"><%= chat.messages.count %> msgs</span>
+            <% end %>
           <% end %>
 
           <div class="chat-item-menu">
             <button class="chat-menu-btn" data-chat-id="<%= chat.id %>">⋯</button>
             <div class="chat-menu-dropdown" id="chatMenu-<%= chat.id %>">
-              <button class="chat-rename-btn" data-chat-id="<%= chat.id %>" data-chat-title="<%= chat.title %>">✏️ Renomear</button>
-              <%= button_to "🗑️ Excluir", stack_chat_path(@stack, chat),
-                  method: :delete,
-                  class: "chat-menu-delete",
-                  data: { turbo_confirm: "Tem certeza?" } %>
+              <button class="chat-rename-btn"
+                      data-chat-id="<%= chat.id %>"
+                      data-chat-title="<%= chat.title %>"
+                      data-has-stack="<%= @stack.present? %>"
+                      data-stack-id="<%= @stack&.id %>">✏️ Renomear</button>
+
+              <% if @stack %>
+                <%= button_to "🗑️ Excluir", stack_chat_path(@stack, chat),
+                    method: :delete,
+                    class: "chat-menu-delete",
+                    data: { turbo_confirm: "Tem certeza?" } %>
+              <% else %>
+                <%= button_to "🗑️ Excluir", chat_path(chat),
+                    method: :delete,
+                    class: "chat-menu-delete",
+                    data: { turbo_confirm: "Tem certeza?" } %>
+              <% end %>
             </div>
           </div>
         </div>
@@ -37,7 +66,12 @@
     <div class="chat-empty">
       <h2>Selecione um chat</h2>
       <p>Escolha um chat na sidebar ou crie um novo para começar.</p>
-      <%= button_to "+ Novo Chat", stack_chats_path(@stack), method: :post, class: "new-chat-btn" %>
+
+      <% if @stack %>
+        <%= button_to "+ Novo Chat", stack_chats_path(@stack), method: :post, class: "new-chat-btn" %>
+      <% else %>
+        <%= button_to "+ Novo Chat", chats_path, method: :post, class: "new-chat-btn" %>
+      <% end %>
     </div>
   </main>
 </div>
@@ -48,6 +82,7 @@
     const openBtn = document.getElementById('sidebarOpen');
     const closeBtn = document.getElementById('sidebarClose');
 
+    // Toggle sidebar
     if (closeBtn) {
       closeBtn.addEventListener('click', () => {
         sidebar.classList.add('collapsed');
@@ -62,12 +97,14 @@
       });
     }
 
+    // Fechar menus ao clicar fora
     document.addEventListener('click', (e) => {
       if (!e.target.closest('.chat-item-menu')) {
         document.querySelectorAll('.chat-menu-dropdown.open').forEach(el => el.classList.remove('open'));
       }
     });
 
+    // Menu dropdown
     document.querySelectorAll('.chat-menu-btn').forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.preventDefault();
@@ -80,33 +117,46 @@
       });
     });
 
-    const sidebarChats = document.querySelector('.sidebar-chats');
-    const basePath = sidebarChats ? sidebarChats.dataset.basePath : '';
-
+    // Renomear chat
     document.querySelectorAll('.chat-rename-btn').forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.preventDefault();
         e.stopPropagation();
+
         const chatId = btn.dataset.chatId;
         const currentTitle = btn.dataset.chatTitle;
+        const hasStack = btn.dataset.hasStack === 'true';
+        const stackId = btn.dataset.stackId;
+
         const newTitle = prompt("Novo título:", currentTitle);
+
         if (newTitle && newTitle !== currentTitle) {
           const form = document.createElement('form');
-          form.method = 'POST';
-          form.action = `${basePath}/${chatId}`;
 
+          // Define a URL baseada no contexto (com ou sem stack)
+          if (hasStack) {
+            form.action = `/stacks/${stackId}/chats/${chatId}`;
+          } else {
+            form.action = `/chats/${chatId}`;
+          }
+
+          form.method = 'POST';
+
+          // Spoofing do método PUT/PATCH
           const method = document.createElement('input');
           method.type = 'hidden';
           method.name = '_method';
           method.value = 'patch';
           form.appendChild(method);
 
+          // CSRF token
           const token = document.createElement('input');
           token.type = 'hidden';
           token.name = 'authenticity_token';
           token.value = document.querySelector('meta[name="csrf-token"]').content;
           form.appendChild(token);
 
+          // Novo título
           const title = document.createElement('input');
           title.type = 'hidden';
           title.name = 'chat[title]';
@@ -118,5 +168,8 @@
         }
       });
     });
+
+    // Inicializar tooltips ou outras funcionalidades
+    console.log('Sidebar inicializada com sucesso!');
   })();
 </script>

@@ -1,23 +1,26 @@
+# app/controllers/messages_controller.rb
 class MessagesController < ApplicationController
   before_action :authenticate_user!
   before_action :set_stack
   before_action :set_chat
 
   def create
-    @message = @chat.messages.build(message_params)
-    @message.role = "user"
+    # CORREÇÃO: usar user_id em vez de user
+    @message = @chat.messages.build(
+      content: message_params[:content],
+      role: "user",
+      user_id: current_user.id  # ← MUDAR DE 'user' PARA 'user_id'
+    )
 
     if @message.save
-      ChatService.new(@chat).process_user_message(@message.content)
+      @assistant_message = ChatService.new(@chat).process_user_message(
+        @message.content,
+        current_user
+      )
 
       respond_to do |format|
         format.turbo_stream
-        format.html { redirect_to stack_chat_path(@stack, @chat) }
-      end
-    else
-      respond_to do |format|
-        format.turbo_stream { render turbo_stream: turbo_stream.replace("message-form", partial: "messages/form", locals: { chat: @chat, message: @message }) }
-        format.html { redirect_to stack_chat_path(@stack, @chat), alert: @message.errors.full_messages.join(", ") }
+        format.html { redirect_to stack_chat_path(@stack) }
       end
     end
   end
@@ -25,11 +28,14 @@ class MessagesController < ApplicationController
   private
 
   def set_stack
-    @stack = Stack.find(params[:stack_id])
+    @stack = current_user.stacks.find(params[:stack_id])
   end
 
   def set_chat
-    @chat = @stack.chats.find(params[:chat_id])
+    @chat = @stack.chat || @stack.create_chat(
+      title: "Chat #{@stack.name}",
+      user: current_user
+    )
   end
 
   def message_params
