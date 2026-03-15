@@ -9,16 +9,22 @@
       <% @stacks.each do |stack| %>
         <div class="sf-stack-card">
           <span class="sf-stack-icon">
-            <% if stack.title.downcase.include?("schema") %>
-              🗂️
-            <% elsif stack.title.downcase.include?("seed") %>
-              🌱
+            <% if stack.title.present? %>
+              <% if stack.title.downcase.include?("schema") %>
+                🗂️
+              <% elsif stack.title.downcase.include?("seed") %>
+                🌱
+              <% elsif stack.title.downcase.include?("database") %>
+                💾
+              <% else %>
+                📄
+              <% end %>
             <% else %>
-              📄
+              📄 <!-- ícone padrão se não tiver título -->
             <% end %>
           </span>
-          <h5 class="sf-stack-name"><%= stack.title %></h5>
-          <%= link_to "Abrir", stack_chats_path(stack), class: "sf-btn-primary" %>
+          <h5 class="sf-stack-name"><%= stack.title || stack.name || "Sem nome" %></h5>
+          <%= link_to "Abrir", stack_chat_path(stack), class: "sf-btn-primary" %>
         </div>
       <% end %>
     </div>
