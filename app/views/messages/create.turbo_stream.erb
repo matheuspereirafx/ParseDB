@@ -1,12 +1,13 @@
 <%# app/views/messages/create.turbo_stream.erb %>
 
-<%# Mensagens %>
+<%# Mensagem do usuário %>
 <%= turbo_stream.append "messages" do %>
   <%= render @message %>
 <% end %>
 
+<%# Mensagem do assistente (última mensagem do chat) %>
 <%= turbo_stream.append "messages" do %>
-  <%= render @assistant_message %>
+  <%= render @chat.messages.where(role: "assistant").last %>
 <% end %>
 
 <%# SUBSTITUIR O FORMULÁRIO POR UM NOVO (LIMPO) %>
