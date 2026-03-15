@@ -44,30 +44,30 @@
           <% end %>
         </div>
 
-        <!-- Message Form - CORRIGIDO com ID -->
-        <div class="card-footer bg-white">
-          <%= form_with model: [@stack, :chat, Message.new],
-                        id: "message-form",  # ← ID AQUI!
-                        class: "d-flex gap-2",
-                        data: { controller: "message-form" } do |f| %>
-            <div class="flex-grow-1">
-              <%= f.text_area :content,
-                              class: "form-control",
-                              rows: 2,
-                              placeholder: "Type your message...",
-                              autofocus: true,
-                              required: true,
-                              data: { message_form_target: "input" } %>
-            </div>
-            <div>
-              <%= f.submit "Send",
-                           class: "btn btn-primary h-100",
-                           data: { disable_with: "Sending..." } %>
-            </div>
-          <% end %>
-        </div>
-      </div>
-
+        
+        <!-- Message Form - CORRIGIDO com ID no textarea -->
+              <div class="card-footer bg-white">
+                <%= form_with model: [@stack, :chat, Message.new],
+                              id: "message-form",
+                              class: "d-flex gap-2",
+                              data: { controller: "message-form" } do |f| %>
+                  <div class="flex-grow-1">
+                    <%= f.text_area :content,
+                                    class: "form-control",
+                                    rows: 2,
+                                    placeholder: "Type your message...",
+                                    autofocus: true,
+                                    required: true,
+                                    id: "message_content",  # ← ADICIONAR ESTA LINHA!
+                                    data: { message_form_target: "input" } %>
+                  </div>
+                  <div>
+                    <%= f.submit "Send",
+                                class: "btn btn-primary h-100",
+                                data: { disable_with: "Sending..." } %>
+                  </div>
+                <% end %>
+              </div>
       <!-- Keyboard Shortcut -->
       <div class="text-center text-muted small">
         <kbd>Enter</kbd> to send · <kbd>Shift</kbd> + <kbd>Enter</kbd> for new line

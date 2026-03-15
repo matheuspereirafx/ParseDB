@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_15_150748) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_15_165416) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -33,6 +33,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_15_150748) do
     t.datetime "created_at", null: false
     t.bigint "stack_id"
     t.string "title"
+    t.string "topic"
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
     t.index ["stack_id"], name: "index_chats_on_stack_id"

@@ -1,6 +1,7 @@
 # app/models/message.rb
 class Message < ApplicationRecord
   belongs_to :chat
+  belongs_to :user
 
   MAX_USER_MESSAGES = 100
 

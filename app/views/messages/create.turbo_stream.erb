@@ -1,6 +1,6 @@
 <%# app/views/messages/create.turbo_stream.erb %>
 
-<%# Adicionar mensagens %>
+<%# Mensagens %>
 <%= turbo_stream.append "messages" do %>
   <%= render @message %>
 <% end %>
@@ -9,20 +9,34 @@
   <%= render @assistant_message %>
 <% end %>
 
-<%# Script para limpar formulário %>
+<%# SUBSTITUIR O FORMULÁRIO POR UM NOVO (LIMPO) %>
+<%= turbo_stream.replace "message-form" do %>
+  <%= form_with model: [@stack, :chat, Message.new],
+                id: "message-form",
+                class: "d-flex gap-2",
+                data: { controller: "message-form" } do |f| %>
+    <div class="flex-grow-1">
+      <%= f.text_area :content,
+                      class: "form-control",
+                      rows: 2,
+                      placeholder: "Type your message...",
+                      autofocus: true,
+                      required: true,
+                      id: "message_content",
+                      data: { message_form_target: "input" } %>
+    </div>
+    <div>
+      <%= f.submit "Send",
+                   class: "btn btn-primary h-100",
+                   data: { disable_with: "Sending..." } %>
+    </div>
+  <% end %>
+<% end %>
+
+<%# Scroll %>
 <%= turbo_stream.append "scripts" do %>
   <script>
-    // Limpar o formulário pelo ID
-    const form = document.getElementById('message-form');
-    if (form) {
-      form.reset();
-      form.querySelector('textarea')?.focus();
-    }
-
-    // Scroll
     const messagesDiv = document.getElementById('messages');
-    if (messagesDiv) {
-      messagesDiv.scrollTop = messagesDiv.scrollHeight;
-    }
+    if (messagesDiv) messagesDiv.scrollTop = messagesDiv.scrollHeight;
   </script>
 <% end %>

@@ -1,22 +1,22 @@
 # app/models/stack.rb
 class Stack < ApplicationRecord
   belongs_to :user
-  has_one :chat, dependent: :destroy  # ← UM chat por stack!
+  has_one :chat, dependent: :destroy
 
   validates :name, presence: true
   validates :description, presence: true
 
-  # Opcional: criar chat automaticamente quando o stack for criado
-  after_create :create_default_chat
+  # Remover o after_create que depende do RubyLLM
+  # after_create :create_default_chat
 
-  private
+  # Criar um método manual para criar o chat
+  def create_chat_manually
+    return chat if chat.present?
 
-  def create_default_chat
-    create_chat!(
-      title: "Chat #{name}",
-      user: User.first # ou associar ao dono do stack
+    Chat.create!(
+      stack: self,
+      user: user,
+      title: "Chat #{name}"
     )
-  rescue => e
-    Rails.logger.error "Erro ao criar chat para stack #{id}: #{e.message}"
   end
 end

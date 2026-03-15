@@ -5,14 +5,14 @@ class MessagesController < ApplicationController
   before_action :set_chat
 
   def create
+    # CORREÇÃO: usar user_id em vez de user
     @message = @chat.messages.build(
       content: message_params[:content],
       role: "user",
-      user: current_user
+      user_id: current_user.id  # ← MUDAR DE 'user' PARA 'user_id'
     )
 
     if @message.save
-      # GUARDAR O RETORNO do service em uma variável
       @assistant_message = ChatService.new(@chat).process_user_message(
         @message.content,
         current_user
