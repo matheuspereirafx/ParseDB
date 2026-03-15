@@ -1,21 +1,56 @@
 <%# app/views/messages/create.turbo_stream.erb %>
 
-<%# Adicionar a mensagem do usuário %>
-<%= turbo_stream.append "messages" do %>
-  <%= render @message %>
+<%# Adicionar mensagem do usuário %>
+<%= turbo_stream.append "messages-container" do %>
+  <div class="mb-3 text-end" id="<%= dom_id(@message) %>">
+    <div class="bg-primary text-white d-inline-block p-3 rounded-3" style="max-width: 75%;">
+      <small class="text-white-50 d-block mb-1">
+        👤 Você · <%= @message.created_at.strftime('%H:%M') %>
+      </small>
+      <div class="message-content">
+        <%= simple_format(@message.content) %>
+      </div>
+    </div>
+  </div>
 <% end %>
 
-<%# Adicionar a resposta do assistente (a última mensagem) %>
-<%= turbo_stream.append "messages" do %>
-  <%= render @chat.messages.where(role: "assistant").last %>
-<% end %>
-
-<%# Limpar o formulário %>
-<%= turbo_stream.replace "message-form" do %>
-  <%= render "messages/form", chat: @chat, message: Message.new %>
-<% end %>
-
-<%# Remover indicador de digitação %>
+<%# Mostrar indicador de digitação %>
 <%= turbo_stream.update "typing-indicator" do %>
-  <div id="typing-indicator" style="display: none;"></div>
+  <div id="typing-indicator" style="display: block;">
+    <div class="mb-3">
+      <div class="bg-light d-inline-block p-3 rounded-3">
+        <small class="text-muted d-block mb-1">🤖 Assistente · agora</small>
+        <div class="typing-animation">
+          <span></span><span></span><span></span>
+        </div>
+      </div>
+    </div>
+  </div>
 <% end %>
+
+<%# Limpar formulário %>
+<%= turbo_stream.replace "message-form" do %>
+  <%= form_with url: stack_chat_messages_path(@chat.stack, @chat),
+                method: :post,
+                data: { turbo_stream: true },
+                class: "d-flex",
+                id: "message-form" do |f| %>
+
+    <%= f.text_area :content,
+                    class: "form-control me-2",
+                    rows: 2,
+                    placeholder: "Digite sua mensagem...",
+                    required: true,
+                    id: "message-content" %>
+
+    <%= f.submit "Enviar", class: "btn btn-primary align-self-start" %>
+  <% end %>
+<% end %>
+
+<!-- Rolar para o final -->
+<script>
+  setTimeout(function() {
+    const container = document.getElementById('messages');
+    if (container) container.scrollTop = container.scrollHeight;
+  }, 50);
+</script>

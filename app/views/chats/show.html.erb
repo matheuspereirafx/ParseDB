@@ -1,70 +1,150 @@
 <%# app/views/chats/show.html.erb %>
-<div class="container mt-4">
-  <div class="row justify-content-center">
-    <div class="col-md-8">
-
+<div class="container py-4">
+  <div class="row">
+    <div class="col-md-8 offset-md-2">
       <!-- Cabeçalho do Chat -->
-      <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="h3 mb-0"><%= @chat.title %></h1>
-        <%= link_to "← Voltar", chats_path, class: "btn btn-outline-secondary btn-sm" %>
-      </div>
-
-      <!-- Área de Mensagens -->
-      <div class="card shadow-sm mb-4">
-        <div class="card-header bg-primary text-white">
-          <h5 class="mb-0">💬 Chat</h5>
+      <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h4 class="mb-0"><%= @chat.title %></h4>
+          <%= link_to "Voltar", stack_chats_path(@chat.stack), class: "btn btn-sm btn-outline-secondary" %>
         </div>
 
-        <div class="card-body" style="height: 400px; overflow-y: auto;" id="messages">
-          <% if @messages.any? %>
-            <% @messages.each do |message| %>
-              <div class="mb-3 <%= message.role == 'user' ? 'text-end' : 'text-start' %>">
-                <div class="d-inline-block p-3 rounded-3 <%= message.role == 'user' ? 'bg-primary text-white' : 'bg-light' %>"
-                     style="max-width: 75%;">
-                  <strong><%= message.role == 'user' ? '👤 Você' : '🤖 Assistente' %>:</strong>
-                  <p class="mb-0 mt-1"><%= message.content %></p>
-                  <small class="<%= message.role == 'user' ? 'text-white-50' : 'text-muted' %> d-block mt-1">
-                    <%= l(message.created_at, format: :short) if message.created_at %>
-                  </small>
+        <!-- Lista de Mensagens -->
+        <div class="card-body" style="height: 500px; overflow-y: auto;" id="messages">
+          <%= turbo_stream_from "chat_#{@chat.id}" %>
+
+          <div id="messages-container">
+            <% if @messages.present? %>
+              <% @messages.each do |message| %>
+                <div class="mb-3 <%= 'text-end' if message.role == 'user' %>"
+                     id="<%= dom_id(message) %>">
+                  <div class="<%= message.role == 'user' ? 'bg-primary text-white' : 'bg-light' %>
+                              d-inline-block p-3 rounded-3" style="max-width: 75%;">
+
+                    <!-- Cabeçalho da mensagem -->
+                    <small class="<%= message.role == 'user' ? 'text-white-50' : 'text-muted' %> d-block mb-1">
+                      <% if message.role == 'user' %>
+                        👤 Você · <%= message.created_at.strftime('%H:%M') %>
+                      <% else %>
+                        🤖 Assistente · <%= message.created_at.strftime('%H:%M') %>
+                      <% end %>
+                    </small>
+
+                    <!-- Conteúdo da mensagem -->
+                    <div class="message-content">
+                      <%= simple_format(message.content) %>
+                    </div>
+                  </div>
                 </div>
+              <% end %>
+            <% else %>
+              <div class="text-center text-muted py-5">
+                <p>Nenhuma mensagem ainda. Comece a conversa!</p>
               </div>
             <% end %>
-          <% else %>
-            <div class="text-center text-muted py-5">
-              <h4>👋 Olá!</h4>
-              <p>Comece a conversa enviando uma mensagem abaixo.</p>
+          </div>
+
+          <!-- Indicador de digitação -->
+          <div id="typing-indicator" style="display: none;">
+            <div class="mb-3">
+              <div class="bg-light d-inline-block p-3 rounded-3">
+                <small class="text-muted d-block mb-1">🤖 Assistente · agora</small>
+                <div class="typing-animation">
+                  <span></span><span></span><span></span>
+                </div>
+              </div>
             </div>
-          <% end %>
+          </div>
         </div>
 
-        <!-- Formulário de Mensagem -->
-        <div class="card-footer bg-white">
-          <%= form_with model: [@chat, Message.new], class: "d-flex gap-2" do |f| %>
-            <div class="flex-grow-1">
-              <%= f.text_area :content,
-                              class: "form-control",
-                              rows: 2,
-                              placeholder: "Digite sua mensagem...",
-                              autofocus: true,
-                              required: true %>
-            </div>
-            <div>
-              <%= f.submit "Enviar", class: "btn btn-primary h-100" %>
-            </div>
-          <% end %>
+        <!-- FORMULÁRIO COM HTML PURO (CORRIGIDO) -->
+        <div class="card-footer">
+          <form action="<%= stack_chat_messages_path(@chat.stack, @chat) %>"
+                method="post"
+                data-turbo-stream="true"
+                class="d-flex"
+                id="message-form">
+
+            <!-- Token de autenticidade OBRIGATÓRIO -->
+            <input type="hidden"
+                   name="authenticity_token"
+                   value="<%= form_authenticity_token %>">
+
+            <!-- Campo com nome CORRETO: message[content] -->
+            <textarea name="message[content]"
+                      class="form-control me-2"
+                      rows="2"
+                      placeholder="Digite sua mensagem..."
+                      required></textarea>
+
+            <button type="submit" class="btn btn-primary align-self-start">
+              Enviar
+            </button>
+          </form>
         </div>
       </div>
-
     </div>
   </div>
 </div>
 
-<!-- Auto-scroll para nova mensagem -->
+<!-- Animação de digitação -->
+<style>
+  .typing-animation {
+    display: flex;
+    gap: 4px;
+    padding: 4px 0;
+  }
+
+  .typing-animation span {
+    width: 8px;
+    height: 8px;
+    background-color: #888;
+    border-radius: 50%;
+    animation: typing 1.4s infinite ease-in-out;
+  }
+
+  .typing-animation span:nth-child(1) { animation-delay: 0s; }
+  .typing-animation span:nth-child(2) { animation-delay: 0.2s; }
+  .typing-animation span:nth-child(3) { animation-delay: 0.4s; }
+
+  @keyframes typing {
+    0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+    30% { transform: translateY(-10px); opacity: 1; }
+  }
+
+  #messages {
+    scroll-behavior: smooth;
+  }
+
+  .message-content p:last-child {
+    margin-bottom: 0;
+  }
+</style>
+
+<!-- Scroll automático e atualização em tempo real -->
 <script>
-  document.addEventListener("turbo:load", function() {
-    const messagesDiv = document.getElementById('messages');
+  document.addEventListener("DOMContentLoaded", function() {
+    // Scroll inicial
+    const messagesDiv = document.getElementById("messages");
     if (messagesDiv) {
       messagesDiv.scrollTop = messagesDiv.scrollHeight;
     }
+  });
+
+  // Observer para novas mensagens via Turbo
+  document.addEventListener("turbo:load", function() {
+    const messagesDiv = document.getElementById("messages");
+    if (messagesDiv) {
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
+  });
+
+  document.addEventListener("turbo:before-stream-render", function() {
+    setTimeout(function() {
+      const messagesDiv = document.getElementById("messages");
+      if (messagesDiv) {
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+      }
+    }, 50);
   });
 </script>

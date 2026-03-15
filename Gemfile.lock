@@ -365,6 +365,8 @@ GEM
       zeitwerk (~> 2)
     ruby_llm-schema (0.3.0)
     rubyzip (3.2.2)
+    rufus-scheduler (3.9.2)
+      fugit (~> 1.1, >= 1.11.1)
     sassc (2.4.0)
       ffi (~> 1.9)
     sassc-rails (2.1.2)
@@ -482,6 +484,7 @@ DEPENDENCIES
   rails (~> 8.1.2)
   rubocop-rails-omakase
   ruby_llm (~> 1.13)
+  rufus-scheduler
   sassc-rails
   selenium-webdriver
   simple_form

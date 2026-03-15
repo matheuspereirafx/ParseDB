@@ -1,5 +1,5 @@
 <%# app/views/messages/_form.html.erb %>
-<%= form_with model: [chat, Message.new], id: "message-form", local: true, data: { turbo: false } do |f| %>
+<%= form_with model: [stack, chat, Message.new], id: "message-form", local: true, data: { turbo: false } do |f| %>
   <div class="input-group">
     <%= f.text_area :content,
                     class: "form-control",

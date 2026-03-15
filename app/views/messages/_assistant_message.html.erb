@@ -1,0 +1,15 @@
+<%# app/views/messages/_assistant_message.html.erb %>
+<div class="message assistant" id="<%= dom_id(message) %>">
+  <div class="avatar">🤖</div>
+  <div>
+    <div class="bubble">
+      <%= simple_format message.content %>
+    </div>
+    <div class="message-meta">
+      Assistente · <%= message.created_at&.strftime("%H:%M") || 'agora' %>
+      <% if message.id.to_s.start_with?('temp-') %>
+        <span class="badge bg-warning text-dark ms-2">⏳ Enfileirado</span>
+      <% end %>
+    </div>
+  </div>
+</div>
