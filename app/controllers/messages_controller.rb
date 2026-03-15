@@ -5,15 +5,21 @@ class MessagesController < ApplicationController
   before_action :set_chat
 
   def create
-    @message = @chat.messages.build(message_params)
-    @message.role = "user"
+    @message = @chat.messages.build(
+      content: message_params[:content],
+      role: "user",
+      user: current_user
+    )
 
     if @message.save
-      ChatService.new(@chat).process_user_message(@message.content)
+      # GUARDAR O RETORNO do service em uma variável
+      @assistant_message = ChatService.new(@chat).process_user_message(
+        @message.content,
+        current_user
+      )
 
       respond_to do |format|
         format.turbo_stream
-        # CORREÇÃO: não precisa passar @chat na rota (é implícito)
         format.html { redirect_to stack_chat_path(@stack) }
       end
     end
@@ -26,7 +32,6 @@ class MessagesController < ApplicationController
   end
 
   def set_chat
-    # Com has_one, o chat é acessado através do stack
     @chat = @stack.chat || @stack.create_chat(
       title: "Chat #{@stack.name}",
       user: current_user

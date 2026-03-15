@@ -1,3 +1,6 @@
+
+<%# app/views/stacks/index.html.erb %>
+
 <div class="sf-page">
   <div class="sf-glow"></div>
 
@@ -8,23 +11,24 @@
     <div class="sf-stacks-grid">
       <% @stacks.each do |stack| %>
         <div class="sf-stack-card">
-          <span class="sf-stack-icon">
-            <% if stack.title.present? %>
-              <% if stack.title.downcase.include?("schema") %>
-                🗂️
-              <% elsif stack.title.downcase.include?("seed") %>
+          <!-- ÍCONE E NOME NA MESMA LINHA -->
+          <h5 class="sf-stack-name">
+            <span class="sf-stack-icon">
+              <% if stack.name.downcase.include?("seed") %>
                 🌱
-              <% elsif stack.title.downcase.include?("database") %>
+              <% elsif stack.name.downcase.include?("schema") %>
+                🗂️
+              <% elsif stack.name.downcase.include?("database") %>
                 💾
               <% else %>
                 📄
               <% end %>
-            <% else %>
-              📄 <!-- ícone padrão se não tiver título -->
-            <% end %>
-          </span>
-          <h5 class="sf-stack-name"><%= stack.title || stack.name || "Sem nome" %></h5>
-          <%= link_to "Abrir", stack_chat_path(stack), class: "sf-btn-primary" %>
+            </span>
+            <%= stack.name %>
+          </h5>
+
+          <p class="sf-stack-description"><%= stack.description %></p>
+          <%= link_to "Open Chat", stack_chat_path(stack), class: "sf-btn-primary" %>
         </div>
       <% end %>
     </div>

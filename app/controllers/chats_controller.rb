@@ -4,20 +4,20 @@ class ChatsController < ApplicationController
   before_action :set_stack
   before_action :set_chat, only: [:show]
 
-  # GET /stacks/:stack_id/chat
   def show
     @messages = @chat.messages.order(:created_at)
     @message = Message.new
-    render :show
   end
-
-  # POST /stacks/:stack_id/chat/messages
-  # (as mensagens são criadas pelo MessagesController)
 
   private
 
   def set_stack
-    @stack = current_user.stacks.find(params[:stack_id])
+    @stack = current_user.stacks.find_by(id: params[:stack_id])
+
+    if @stack.nil?
+      flash[:alert] = "Stack not found. Available stacks: #{current_user.stacks.pluck(:id).join(', ')}"
+      redirect_to stacks_path
+    end
   end
 
   def set_chat

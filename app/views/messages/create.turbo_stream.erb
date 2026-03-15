@@ -1,21 +1,28 @@
 <%# app/views/messages/create.turbo_stream.erb %>
 
-<%# Adicionar a mensagem do usuário %>
+<%# Adicionar mensagens %>
 <%= turbo_stream.append "messages" do %>
   <%= render @message %>
 <% end %>
 
-<%# Adicionar a resposta do assistente (a última mensagem) %>
 <%= turbo_stream.append "messages" do %>
-  <%= render @chat.messages.where(role: "assistant").last %>
+  <%= render @assistant_message %>
 <% end %>
 
-<%# Limpar o formulário %>
-<%= turbo_stream.replace "message-form" do %>
-  <%= render "messages/form", chat: @chat, message: Message.new %>
-<% end %>
+<%# Script para limpar formulário %>
+<%= turbo_stream.append "scripts" do %>
+  <script>
+    // Limpar o formulário pelo ID
+    const form = document.getElementById('message-form');
+    if (form) {
+      form.reset();
+      form.querySelector('textarea')?.focus();
+    }
 
-<%# Remover indicador de digitação %>
-<%= turbo_stream.update "typing-indicator" do %>
-  <div id="typing-indicator" style="display: none;"></div>
+    // Scroll
+    const messagesDiv = document.getElementById('messages');
+    if (messagesDiv) {
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
+  </script>
 <% end %>

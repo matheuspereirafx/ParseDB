@@ -44,9 +44,10 @@
           <% end %>
         </div>
 
-        <!-- Message Form -->
+        <!-- Message Form - CORRIGIDO com ID -->
         <div class="card-footer bg-white">
           <%= form_with model: [@stack, :chat, Message.new],
+                        id: "message-form",  # ← ID AQUI!
                         class: "d-flex gap-2",
                         data: { controller: "message-form" } do |f| %>
             <div class="flex-grow-1">
@@ -81,10 +82,8 @@
   document.addEventListener("turbo:load", function() {
     const messagesDiv = document.getElementById('messages');
     if (messagesDiv) {
-      // Scroll to bottom
       messagesDiv.scrollTop = messagesDiv.scrollHeight;
 
-      // Observer for new messages via Turbo
       const observer = new MutationObserver(() => {
         messagesDiv.scrollTop = messagesDiv.scrollHeight;
       });
@@ -93,7 +92,6 @@
     }
   });
 
-  // Keyboard shortcut
   document.addEventListener("keydown", function(e) {
     if (e.key === "Enter" && !e.shiftKey) {
       const textarea = document.querySelector('textarea[name="message[content]"]');
