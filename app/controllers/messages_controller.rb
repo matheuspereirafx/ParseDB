@@ -10,7 +10,14 @@ class MessagesController < ApplicationController
     if @message.save
       system_prompt = @stack.content.to_s
       ruby_llm_chat = RubyLLM.chat(model: "gemini-2.5-flash")
-      response = ruby_llm_chat.with_instructions(system_prompt).ask(@message.content)
+      ruby_llm_chat.with_instructions(system_prompt)
+
+      # Carrega mensagens anteriores como contexto (memória)
+      @chat.messages.order(:created_at).each do |msg|
+        ruby_llm_chat.add_message(role: msg.role, content: msg.content)
+      end
+
+      response = ruby_llm_chat.ask(@message.content)
       Message.create!(role: "assistant", content: response.content, chat: @chat)
       redirect_to stack_chat_path(@stack, @chat)
     else
