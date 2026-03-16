@@ -42,7 +42,7 @@ class MessagesController < ApplicationController
     elsif file.image?
       send_question(model: "gpt-4o", with: { image: @message.file.url })
     elsif file.audio?
-      temp_file = Tempfile.new(["audio", File.extname(@message.file.filename.to_s)])
+      temp_file = Tempfile.new([ "audio", File.extname(@message.file.filename.to_s) ])
 
       URI.open(@message.file.url) do |remote_file|
         IO.copy_stream(remote_file, temp_file)
