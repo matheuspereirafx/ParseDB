@@ -15,7 +15,6 @@
               <span class="chat-item-meta"><%= chat.messages.count %> msgs</span>
             <% end %>
 
-            <!-- FORA do link_to -->
             <div class="chat-item-menu">
               <button class="chat-menu-btn" data-chat-id="<%= chat.id %>">⋯</button>
               <div class="chat-menu-dropdown" id="chatMenu-<%= chat.id %>">
@@ -55,6 +54,15 @@
               <div class="message-meta">
                 <%= message.role == 'user' ? 'Você' : 'Assistente' %> · <%= message.created_at.strftime("%H:%M") %>
               </div>
+
+              <!-- ↓ ADICIONADO: exibe o arquivo enviado pelo user -->
+              <% if message.role == 'user' && message.file.attached? %>
+                <div class="message-file">
+                  <strong>📎</strong>
+                  <%= link_to message.file.filename, rails_blob_path(message.file, disposition: "attachment") %>
+                </div>
+              <% end %>
+
             </div>
           </div>
         <% end %>
@@ -63,7 +71,8 @@
 
     <div class="input-area">
       <div class="input-container">
-        <%= simple_form_for [@stack, @chat, @message] do |f| %>
+        <!-- ↓ ADICIONADO: multipart: true para permitir upload -->
+        <%= simple_form_for [@stack, @chat, @message], html: { multipart: true } do |f| %>
           <div class="input-wrapper">
             <%= f.input :content,
                 label: false,
@@ -74,6 +83,10 @@
                   class: "chat-textarea",
                   id: "chat-input"
                 } %>
+
+            <!-- ↓ ADICIONADO: campo de upload -->
+            <%= f.input :file, as: :file, label: "📎 PDF, imagem ou áudio" %>
+
             <%= f.submit "→", class: "send-btn" %>
           </div>
         <% end %>
@@ -84,11 +97,9 @@
 
 <script>
   (function() {
-    // Scroll mensagens
     const messages = document.getElementById('messages');
     if (messages) messages.scrollTop = messages.scrollHeight;
 
-    // Sidebar toggle
     const sidebar = document.getElementById('chatSidebar');
     const openBtn = document.getElementById('sidebarOpen');
     const closeBtn = document.getElementById('sidebarClose');
@@ -107,14 +118,12 @@
       });
     }
 
-    // Fecha menus ao clicar fora
     document.addEventListener('click', (e) => {
       if (!e.target.closest('.chat-item-menu')) {
         document.querySelectorAll('.chat-menu-dropdown.open').forEach(el => el.classList.remove('open'));
       }
     });
 
-    // Toggle menu dos 3 pontos
     document.querySelectorAll('.chat-menu-btn').forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.preventDefault();
@@ -127,7 +136,6 @@
       });
     });
 
-    // Renomear chat
     const sidebarChats = document.querySelector('.sidebar-chats');
     const basePath = sidebarChats ? sidebarChats.dataset.basePath : '';
 
