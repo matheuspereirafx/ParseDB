@@ -45,7 +45,13 @@
           <div class="message <%= message.role %>">
             <div class="avatar"><%= message.role == 'user' ? current_user.email.first.upcase : '🤖' %></div>
             <div>
-              <div class="bubble"><%= simple_format message.content %></div>
+              <div class="bubble">
+                <% if message.content.include?("<?xml") %>
+                  <pre><code><%= message.content %></code></pre>
+                <% else %>
+                  <%= simple_format message.content %>
+                <% end %>
+              </div>
               <div class="message-meta">
                 <%= message.role == 'user' ? 'Você' : 'Assistente' %> · <%= message.created_at.strftime("%H:%M") %>
               </div>
