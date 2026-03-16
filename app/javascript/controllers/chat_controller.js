@@ -58,7 +58,7 @@ export default class extends Controller {
     const chatId = event.currentTarget.dataset.chatId
     const currentTitle = event.currentTarget.dataset.chatTitle
     const basePath = this.element.querySelector(".sidebar-chats").dataset.basePath
-    const newTitle = prompt("Novo título:", currentTitle)
+    const newTitle = prompt("New title:", currentTitle)
 
     if (newTitle && newTitle !== currentTitle) {
       const form = document.createElement("form")

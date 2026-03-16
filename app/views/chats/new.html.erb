@@ -1,8 +1,8 @@
-<h1>Novo Chat</h1>
+<h1>New Chat</h1>
 
 <%= simple_form_for [@stack, @chat] do |f| %>
   <%= f.input :title, label: "Título" %>
   <%= f.submit "Criar Chat", class: "btn btn-primary" %>
 <% end %>
 
-<%= link_to "Voltar", stack_chats_path(@stack) %>
+<%= link_to "Back", stack_chats_path(@stack) %>

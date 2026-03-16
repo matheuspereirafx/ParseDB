@@ -2,7 +2,7 @@
   <!-- SIDEBAR -->
   <aside class="chat-sidebar" data-chat-target="sidebar">
     <div class="sidebar-header">
-      <%= button_to "+ Novo Chat", stack_chats_path(@stack), method: :post, class: "new-chat-btn" %>
+      <%= button_to "+ New Chat", stack_chats_path(@stack), method: :post, class: "new-chat-btn" %>
       <button class="sidebar-toggle" data-action="click->chat#closeSidebar">✕</button>
     </div>
 
@@ -23,11 +23,11 @@
               <button class="chat-rename-btn"
                       data-chat-id="<%= chat.id %>"
                       data-chat-title="<%= chat.title %>"
-                      data-action="click->chat#rename">✏️ Renomear</button>
-              <%= button_to "🗑️ Excluir", stack_chat_path(@stack, chat),
+                      data-action="click->chat#rename">✏️ Rename</button>
+              <%= button_to "🗑️ Delete", stack_chat_path(@stack, chat),
                   method: :delete,
                   class: "chat-menu-delete",
-                  data: { turbo_confirm: "Tem certeza?" } %>
+                  data: { turbo_confirm: "Are you sure?" } %>
             </div>
           </div>
         </div>
@@ -40,9 +40,9 @@
   <!-- MAIN: estado vazio -->
   <main class="chat-main">
     <div class="chat-empty">
-      <h2>Selecione um chat</h2>
-      <p>Escolha um chat na sidebar ou crie um novo para começar.</p>
-      <%= button_to "+ Novo Chat", stack_chats_path(@stack), method: :post, class: "new-chat-btn" %>
+      <h2>Select chat</h2>
+      <p>Choose a chat from the sidebar or create a new one to get started.</p>
+      <%= button_to "+ New Chat", stack_chats_path(@stack), method: :post, class: "new-chat-btn" %>
     </div>
   </main>
 </div>

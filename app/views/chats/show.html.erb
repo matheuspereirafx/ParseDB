@@ -2,7 +2,7 @@
   <!-- SIDEBAR -->
   <aside class="chat-sidebar" data-chat-target="sidebar">
     <div class="sidebar-header">
-      <%= button_to "+ Novo Chat", stack_chats_path(@stack), method: :post, class: "new-chat-btn" %>
+      <%= button_to "+ New Chat", stack_chats_path(@stack), method: :post, class: "new-chat-btn" %>
       <button class="sidebar-toggle" data-action="click->chat#closeSidebar">✕</button>
     </div>
 
@@ -23,11 +23,11 @@
               <button class="chat-rename-btn"
                       data-chat-id="<%= chat.id %>"
                       data-chat-title="<%= chat.title %>"
-                      data-action="click->chat#rename">✏️ Renomear</button>
-              <%= button_to "🗑️ Excluir", stack_chat_path(@stack, chat),
+                      data-action="click->chat#rename">✏️ Rename</button>
+              <%= button_to "🗑️ Delete", stack_chat_path(@stack, chat),
                   method: :delete,
                   class: "chat-menu-delete",
-                  data: { turbo_confirm: "Tem certeza?" } %>
+                  data: { turbo_confirm: "Ae you sure?" } %>
             </div>
           </div>
         </div>
@@ -57,7 +57,7 @@
                 <% end %>
               </div>
               <div class="message-meta">
-                <%= message.role == 'user' ? 'Você' : 'Assistente' %> · <%= message.created_at.strftime("%H:%M") %>
+                <%= message.role == 'user' ? 'You' : 'Assistant' %> · <%= message.created_at.strftime("%H:%M") %>
               </div>
             </div>
           </div>
@@ -73,7 +73,7 @@
                 label: false,
                 as: :text,
                 input_html: {
-                  placeholder: "Descreva seu projeto...",
+                  placeholder: "Describe your project...",
                   rows: 4,
                   class: "chat-textarea",
                   id: "chat-input"
