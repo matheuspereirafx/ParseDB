@@ -104,37 +104,26 @@
   animation: sf-slide-up 0.8s ease-out 0.2s both;
 }
 
-.sf-hero-buttons {
+.sf-hero-pills {
   display: flex;
-  gap: 16px;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
   animation: sf-slide-up 0.8s ease-out 0.3s both;
-
-  .sf-btn-primary { min-width: 160px; text-align: center; justify-content: center; }
 }
 
-.sf-btn-primary {
-  display: inline-flex;
+.sf-pill {
+  display: flex;
   align-items: center;
   gap: 8px;
-  padding: 14px 32px;
-  background: var(--sf-accent);
-  color: white;
-  border: none;
+  padding: 10px 24px;
+  background: rgba(108, 92, 231, 0.1);
+  border: 1px solid rgba(108, 92, 231, 0.3);
   border-radius: 12px;
-  font-size: 1.05rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s;
-  text-decoration: none;
   font-family: 'Outfit', sans-serif;
-
-  &:hover {
-    background: var(--sf-accent-light);
-    color: white;
-    box-shadow: 0 0 30px var(--sf-accent-glow);
-    transform: translateY(-2px);
-    text-decoration: none;
-  }
+  font-size: 1rem;
+  font-weight: 500;
+  color: #e8e8f0;
 }
 
 @keyframes sf-fade-in { from { opacity: 0; } to { opacity: 1; } }

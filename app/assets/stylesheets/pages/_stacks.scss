@@ -89,3 +89,26 @@
 @media (max-width: 768px) {
   .sf-stacks-grid { flex-direction: column; align-items: center; }
 }
+
+.sf-stack-card .sf-btn-primary {
+  margin-top: 8px;
+  padding: 10px 28px;
+  font-size: 0.9rem;
+  display: inline-flex;
+  align-items: center;
+  background: #6c5ce7;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s;
+
+  &:hover {
+    background: #a29bfe;
+    color: white;
+    text-decoration: none;
+    box-shadow: 0 0 20px rgba(108, 92, 231, 0.3);
+  }
+}
