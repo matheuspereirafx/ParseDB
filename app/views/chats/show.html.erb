@@ -27,7 +27,7 @@
               <%= button_to "🗑️ Delete", stack_chat_path(@stack, chat),
                   method: :delete,
                   class: "chat-menu-delete",
-                  data: { turbo_confirm: "Ae you sure?" } %>
+                  data: { turbo_confirm: "Are you sure?" } %>
             </div>
           </div>
         </div>
@@ -90,7 +90,7 @@
                 } %>
 
             <!-- ↓ ADICIONADO: campo de upload -->
-            <%= f.input :file, as: :file, label: "📎 PDF, imagem ou áudio" %>
+            <%= f.input :file, as: :file, label: "📎 PDF, Image or Audio" %>
 
             <%= f.submit "→", class: "send-btn" %>
           </div>
