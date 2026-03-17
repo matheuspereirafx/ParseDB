@@ -1,3 +1,4 @@
+# app/models/message.rb
 class Message < ApplicationRecord
   belongs_to :chat
 
@@ -11,7 +12,7 @@ class Message < ApplicationRecord
 
   validate :file_size_limit
 
-  after_create_commit :broadcast_append_to_chat
+  after_create_commit :broadcast_append_to_chat  # ✅ dentro da classe!
 
   scope :user, -> { where(role: "user") }
   scope :assistant, -> { where(role: "assistant") }
@@ -19,7 +20,12 @@ class Message < ApplicationRecord
   private
 
   def broadcast_append_to_chat
-    broadcast_append_to chat, target: "messages", partial: "messages/message", locals: { message: self }
+    Turbo::StreamsChannel.broadcast_append_to(
+      "chat_#{chat.id}",
+      target: "messages",
+      partial: "messages/message",
+      locals: { message: self }
+    )
   end
 
   def file_size_limit

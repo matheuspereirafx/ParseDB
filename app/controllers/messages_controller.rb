@@ -4,11 +4,12 @@ class MessagesController < ApplicationController
   before_action :set_chat
 
   def create
+    Rails.logger.info "=== CHAT ID: #{@chat.id} ==="
     @message = @chat.messages.new(message_params)
     @message.role = "user"
 
     if @message.save
-      # ✅ ADICIONADO: cria mensagem vazia do assistente
+      # ✅ Cria mensagem vazia do assistente (aparece com ⏳)
       @assistant_message = @chat.messages.create(role: "assistant", content: "")
 
       if @message.file.attached?
@@ -37,13 +38,11 @@ class MessagesController < ApplicationController
     ruby_llm_chat = RubyLLM.chat.with_model(model, provider: provider, assume_exists: true)
     ruby_llm_chat.with_instructions(@stack.content.to_s)
 
-    # ✅ ADICIONADO: ignora mensagens vazias
     @chat.messages.order(:created_at).each do |msg|
       next if msg.content.blank?
       ruby_llm_chat.add_message(role: msg.role, content: msg.content)
     end
 
-    # ✅ ADICIONADO: streaming de chunks
     @response = ruby_llm_chat.ask(@message.content, with: with) do |chunk|
       next if chunk.content.blank?
       @assistant_message.content += chunk.content
@@ -51,11 +50,10 @@ class MessagesController < ApplicationController
     end
   end
 
-  # ✅ ADICIONADO: método broadcast_replace
   def broadcast_replace(message)
     Turbo::StreamsChannel.broadcast_replace_to(
-      @chat,
-      target: helpers.dom_id(message),
+      "chat_#{@chat.id}",
+      target: "message_#{message.id}",
       partial: "messages/message",
       locals: { message: message }
     )

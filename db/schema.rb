@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_17_143422) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_17_155841) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -48,6 +48,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_17_143422) do
     t.string "title"
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
+    t.index ["id"], name: "index_chats_on_id_unique", unique: true
     t.index ["stack_id"], name: "index_chats_on_stack_id"
     t.index ["user_id"], name: "index_chats_on_user_id"
   end
@@ -59,6 +60,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_17_143422) do
     t.string "role"
     t.datetime "updated_at", null: false
     t.index ["chat_id"], name: "index_messages_on_chat_id"
+    t.index ["id"], name: "index_messages_on_id_unique", unique: true
   end
 
   create_table "stacks", force: :cascade do |t|

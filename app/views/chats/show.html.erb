@@ -1,4 +1,4 @@
-<%= turbo_stream_from @chat %> <%# ✅ ADICIONADO %>
+<%= turbo_stream_from "chat_#{@chat.id}" %>
 
 <div class="chat-layout" data-controller="chat">
   <!-- SIDEBAR -->
