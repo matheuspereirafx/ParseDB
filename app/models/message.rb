@@ -1,7 +1,5 @@
-# app/models/message.rb
 class Message < ApplicationRecord
   belongs_to :chat
-
   has_one_attached :file
 
   MAX_FILE_SIZE_MB = 10
@@ -16,7 +14,13 @@ class Message < ApplicationRecord
   scope :user, -> { where(role: "user") }
   scope :assistant, -> { where(role: "assistant") }
 
+  after_create_commit :broadcast_append_to_chat
+
   private
+
+  def broadcast_append_to_chat
+    broadcast_append_to chat, target: "messages", partial: "messages/message", locals: { message: self }
+  end
 
   def file_size_limit
     if file.attached? && file.byte_size > MAX_FILE_SIZE_MB.megabytes

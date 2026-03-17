@@ -1,11 +1,15 @@
-<div class="message <%= message.role %>">
-  <div class="avatar"><%= message.role == 'user' ? current_user.email.first.upcase : '🤖' %></div>
+<div class="message <%= message.role %>" id="<%= dom_id(message) %>">
+  <div class="avatar"><%= message.role == 'user' ? '👤' : '🤖' %></div>
   <div>
     <div class="bubble">
-      <% if message.content.include?("<?xml") %>
-        <pre><code><%= message.content %></code></pre>
+      <% if message.content.present? %>
+        <% if message.content.include?("<?xml") %>
+          <pre><code><%= message.content %></code></pre>
+        <% else %>
+          <%= simple_format message.content %>
+        <% end %>
       <% else %>
-        <%= simple_format message.content %>
+        ...
       <% end %>
     </div>
     <div class="message-meta">
