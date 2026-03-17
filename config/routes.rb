@@ -1,4 +1,4 @@
-Rails.application.routes.draw do
+ Rails.application.routes.draw do
   devise_for :users
 
   get "up" => "rails/health#show", as: :rails_health_check
@@ -6,7 +6,7 @@ Rails.application.routes.draw do
   root "pages#home"
 
   resources :stacks, only: [:index, :show] do
-    resources :chats, only: [:create, :index, :show, :new] do
+    resources :chats, only: [:create, :index, :show, :new, :update, :destroy] do
       resources :messages, only: [:create]
     end
   end
