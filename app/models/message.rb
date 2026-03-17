@@ -4,7 +4,7 @@ class Message < ApplicationRecord
 
   MAX_FILE_SIZE_MB = 10
 
-  validates :content, presence: true
+  validates :content, presence: true, unless: -> { role == "assistant" }
   validates :role, presence: true, inclusion: { in: ["user", "assistant"] }
 
   validates :content, length: { minimum: 10, maximum: 1000 }, if: -> { role == "user" }
