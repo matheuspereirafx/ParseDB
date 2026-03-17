@@ -1,0 +1,62 @@
+[33m0485ee8[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mWebSocket[m[33m)[m Turbo Streams com ActionCable funcionando
+[33mc5922fb[m Arquivos schemas alterados + message e showchat com render
+[33m4d2ac7b[m[33m ([m[1;31morigin/master[m[33m, [m[1;32mmaster[m[33m)[m Merge pull request #45 from matheuspereirafx/branch2
+[33mfac9031[m[33m ([m[1;31morigin/branch2[m[33m)[m erro continue
+[33m78a9d5e[m Merge pull request #44 from matheuspereirafx/correcaoerros
+[33m7d67aa3[m[33m ([m[1;31morigin/correcaoerros[m[33m)[m correcao erros ingles
+[33m5b8d544[m[33m ([m[1;31mheroku/master[m[33m)[m Fix ChatService constant naming
+[33mbbb4e63[m Merge pull request #43 from matheuspereirafx/novabranch
+[33md281f1a[m[33m ([m[1;31morigin/novabranch[m[33m)[m all in english
+[33m2043c60[m Merge pull request #42 from matheuspereirafx/feature/multi-modal-service
+[33mbcf7ce9[m[33m ([m[1;31morigin/feature/multi-modal-service[m[33m)[m Merge branch 'master' into feature/multi-modal-service
+[33me043ad4[m Merge pull request #41 from matheuspereirafx/sidebar
+[33md712313[m imagens e pdfs funcionando
+[33m9290781[m[33m ([m[1;31morigin/sidebar[m[33m, [m[1;32msidebar[m[33m)[m sidbar posicao
+[33mca927b4[m Merge pull request #40 from matheuspereirafx/fonts
+[33mbc46766[m[33m ([m[1;31morigin/fonts[m[33m)[m fonts refaturing & js
+[33m46e6ba4[m mult modal service adicionado
+[33mc84203d[m Merge pull request #39 from matheuspereirafx/prompt2
+[33m18cc779[m[33m ([m[1;31morigin/prompt2[m[33m, [m[1;32mprompt2[m[33m)[m Prompt finalizado Memoria arrumada
+[33m6d0523b[m Merge pull request #38 from matheuspereirafx/homeheader
+[33m1af7a4c[m[33m ([m[1;31morigin/homeheader[m[33m)[m front changes
+[33m9f2e2f3[m Merge pull request #37 from matheuspereirafx/homelinks
+[33mff7f226[m[33m ([m[1;31morigin/homelinks[m[33m)[m homelinks feito
+[33m02f420a[m Merge pull request #36 from matheuspereirafx/prompt
+[33me0c1526[m[33m ([m[1;31morigin/prompt[m[33m)[m Prompt New
+[33md800c55[m chats já estão funcionando por stack
+[33m7a63837[m Merge pull request #35 from matheuspereirafx/apillm
+[33me1b5a9b[m[33m ([m[1;31morigin/apillm[m[33m)[m api funcionando
+[33m132d27a[m[33m ([m[1;31morigin/routs[m[33m, [m[1;32mrouts[m[33m)[m Menu recolher
+[33m43c5a97[m Front Chat finish
+[33mbc0f894[m  botao novo chat funcional
+[33m6f5612c[m Layout historico de chatbar + chat
+[33md6105ee[m posicao seta input
+[33m36ae8ae[m Chat att posicao
+[33m788244b[m Espaco Chat e input enquadrado
+[33mad073dd[m Chat mensagens e rotas ligadas
+[33m9d3c027[m fix production database config for Heroku
+[33m958a422[m[33m ([m[1;31morigin/hiroku1[m[33m, [m[1;32mhiroku1[m[33m)[m Merge pull request #22 from matheuspereirafx/frontstack
+[33m38d597b[m[33m ([m[1;31morigin/frontstack[m[33m)[m stacks design
+[33m0810907[m design stacks
+[33mcc79345[m Merge pull request #21 from matheuspereirafx/homepage2
+[33m05c0d8d[m[33m ([m[1;31morigin/homepage2[m[33m)[m alterar rota login cadastro redirecionamento
+[33m083cf32[m Merge pull request #16 from matheuspereirafx/homepage
+[33mdf42105[m[33m ([m[1;31morigin/homepage[m[33m)[m homepage stacks footer
+[33m5409ab5[m homepage stacks link
+[33m7d02401[m[33m ([m[1;31mheroku/main[m[33m)[m Merge pull request #20 from matheuspereirafx/postgres
+[33m287bb9f[m[33m ([m[1;31morigin/postgres[m[33m)[m troca do sqllite pelo postgres
+[33m97c01b3[m homepage seeds
+[33m0757553[m Merge pull request #17 from matheuspereirafx/chat
+[33m5afe681[m homepage short
+[33m313cd2c[m Revert "testeh1"
+[33m119369b[m Resolve conflito no layout application.html.erb
+[33maf489bf[m homepage
+[33m024bff2[m homepage 1
+[33m34faa90[m viewchat
+[33m29e753c[m Merge pull request #14 from matheuspereirafx/gems
+[33m398917f[m[33m ([m[1;31morigin/gems[m[33m)[m Stacks
+[33mbdbf524[m Devise arrumado
+[33ma7c2946[m Authentic, Navbar
+[33md7c5329[m Gems
+[33maa24a12[m testeh1
+[33m657f667[m Rails new

@@ -8,14 +8,16 @@ class MessagesController < ApplicationController
     @message.role = "user"
 
     if @message.save
+
+      @assistant_message = @chat.messages.create!(role: "assistant", content: "")
+
       if @message.file.attached?
         process_file(@message.file)
       else
         send_question
       end
 
-      Message.create!(role: "assistant", content: @response.content, chat: @chat)
-      redirect_to stack_chat_path(@stack, @chat)
+      @assistant_message.update!(content: @response.content)
     else
       @messages = @chat.messages.order(:created_at)
       render "chats/show", status: :unprocessable_entity
@@ -29,11 +31,18 @@ class MessagesController < ApplicationController
     ruby_llm_chat = RubyLLM.chat.with_model(model, provider: provider, assume_exists: true)
     ruby_llm_chat.with_instructions(@stack.content.to_s)
 
+
     @chat.messages.order(:created_at).each do |msg|
+      next if msg.content.blank?
       ruby_llm_chat.add_message(role: msg.role, content: msg.content)
     end
 
-    @response = ruby_llm_chat.ask(@message.content, with: with)
+    @response = ruby_llm_chat.ask(@message.content, with: with) do |chunk|
+      next if chunk.content.blank?
+
+      @assistant_message.content += chunk.content
+      broadcast_replace(@assistant_message)
+    end
   end
 
   def process_file(file)
@@ -51,6 +60,9 @@ class MessagesController < ApplicationController
       send_question(model: "gpt-4o-audio-preview", with: { audio: temp_file.path })
       temp_file.unlink
     end
+  end
+  def broadcast_replace(message)
+    Turbo::StreamsChannel.broadcast_replace_to(@chat, target: helpers.dom_id(message), partial: "messages/message", locals: { message: message })
   end
 
   def set_stack
