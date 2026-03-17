@@ -1,3 +1,5 @@
+<%= turbo_stream_from @chat %> <%# ✅ ADICIONADO %>
+
 <div class="chat-layout" data-controller="chat">
   <!-- SIDEBAR -->
   <aside class="chat-sidebar" data-chat-target="sidebar">
@@ -40,61 +42,38 @@
   <!-- MAIN CHAT -->
   <main class="chat-main">
     <div class="chat-header">
-      <span class="chat-title"><%= @chat.title %></span>
+      <span class="chat-title" id="chat_title"><%= @chat.title %></span> <%# ✅ ADICIONADO id="chat_title" %>
     </div>
 
     <div class="messages-area" data-chat-target="messages">
-      <div class="messages-container">
+      <div class="messages-container" id="messages"> <%# ✅ ADICIONADO id="messages" %>
         <% @messages.each do |message| %>
-          <div class="message <%= message.role %>">
-            <div class="avatar"><%= message.role == 'user' ? current_user.email.first.upcase : '🤖' %></div>
-            <div>
-              <div class="bubble">
-                <% if message.content.include?("<?xml") %>
-                  <pre><code><%= message.content %></code></pre>
-                <% else %>
-                  <%= simple_format message.content %>
-                <% end %>
-              </div>
-              <div class="message-meta">
-                <%= message.role == 'user' ? 'Você' : 'Assistente' %> · <%= message.created_at.strftime("%H:%M") %>
-              </div>
-
-              <!-- ↓ ADICIONADO: exibe o arquivo enviado pelo user -->
-              <% if message.role == 'user' && message.file.attached? %>
-                <div class="message-file">
-                  <strong>📎</strong>
-                  <%= link_to message.file.filename, rails_blob_path(message.file, disposition: "attachment") %>
-                </div>
-              <% end %>
-
-            </div>
-          </div>
+          <%= render "messages/message", message: message %> <%# ✅ ADICIONADO partial %>
         <% end %>
       </div>
     </div>
 
     <div class="input-area">
       <div class="input-container">
-        <!-- ↓ ADICIONADO: multipart: true para permitir upload -->
-        <%= simple_form_for [@stack, @chat, @message], html: { multipart: true } do |f| %>
-          <div class="input-wrapper">
-            <%= f.input :content,
-                label: false,
-                as: :text,
-                input_html: {
-                  placeholder: "Descreva seu projeto...",
-                  rows: 4,
-                  class: "chat-textarea",
-                  id: "chat-input"
-                } %>
+        <div id="new_message_container"> <%# ✅ ADICIONADO %>
+          <%= simple_form_for [@stack, @chat, @message], html: { multipart: true } do |f| %>
+            <div class="input-wrapper">
+              <%= f.input :content,
+                  label: false,
+                  as: :text,
+                  input_html: {
+                    placeholder: "Descreva seu projeto...",
+                    rows: 4,
+                    class: "chat-textarea",
+                    id: "chat-input"
+                  } %>
 
-            <!-- ↓ ADICIONADO: campo de upload -->
-            <%= f.input :file, as: :file, label: "📎 PDF, imagem ou áudio" %>
+              <%= f.input :file, as: :file, label: "📎 PDF, imagem ou áudio" %>
 
-            <%= f.submit "→", class: "send-btn" %>
-          </div>
-        <% end %>
+              <%= f.submit "→", class: "send-btn" %>
+            </div>
+          <% end %>
+        </div> <%# ✅ fecha new_message_container %>
       </div>
     </div>
   </main>

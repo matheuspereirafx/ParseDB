@@ -1,0 +1,19 @@
+<%= turbo_stream.update "new_message_container" do %>
+  <%= simple_form_for [@stack, @chat, Message.new], html: {multipart: true} do |f| %>
+    <div class="input-wrapper">
+      <%= f.input :content,
+      label: false,
+      as: :text,
+      input_html: {
+        placeholder: "Describe your project...",
+        rows: 4,
+        class: "chat-textarea",
+        id: "chat-input"
+      }%>
+
+  <%= f.input :file, as: :file, label:"📎 PDF, image ou audio"  %>
+
+  <%= f.submit "->", class: "send-btn" %>
+  </div>
+  <% end %>
+<% end %>

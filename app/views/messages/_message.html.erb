@@ -1,0 +1,27 @@
+<div class="message <%= message.role %>" id="<%= dom_id(message) %>">
+  <div class="avatar"><%= message.role == 'user' ? message.chat.user.email.first.upcase : '🤖' %></div>
+  <div>
+    <div class="bubble">
+      <% if message.content.blank? %>
+        <span class="streaming-placeholder">⏳</span>
+      <% elsif message.content.include?("<?xml") %>
+        <pre><code><%= message.content %></code></pre>
+      <% else %>
+        <%= simple_format message.content %>
+      <% end %>
+    </div>
+
+    <% unless message.content.blank? %>
+      <div class="message-meta">
+        <%= message.role == 'user' ? 'Você' : 'Assistente' %> · <%= message.created_at.strftime("%H:%M") %>
+      </div>
+    <% end %>
+
+    <% if message.role == 'user' && message.file.attached? %>
+      <div class="message-file">
+        <strong>📎</strong>
+        <%= link_to message.file.filename, rails_blob_path(message.file, disposition: "attachment") %>
+      </div>
+    <% end %>
+  </div>
+</div>

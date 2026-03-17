@@ -8,14 +8,22 @@ class MessagesController < ApplicationController
     @message.role = "user"
 
     if @message.save
+      # ✅ ADICIONADO: cria mensagem vazia do assistente
+      @assistant_message = @chat.messages.create(role: "assistant", content: "")
+
       if @message.file.attached?
         process_file(@message.file)
       else
         send_question
       end
 
-      Message.create!(role: "assistant", content: @response.content, chat: @chat)
-      redirect_to stack_chat_path(@stack, @chat)
+      @assistant_message.update(content: @response.content)
+      broadcast_replace(@assistant_message)
+
+      respond_to do |format|
+        format.turbo_stream
+        format.html { redirect_to stack_chat_path(@stack, @chat) }
+      end
     else
       @messages = @chat.messages.order(:created_at)
       render "chats/show", status: :unprocessable_entity
@@ -29,11 +37,28 @@ class MessagesController < ApplicationController
     ruby_llm_chat = RubyLLM.chat.with_model(model, provider: provider, assume_exists: true)
     ruby_llm_chat.with_instructions(@stack.content.to_s)
 
+    # ✅ ADICIONADO: ignora mensagens vazias
     @chat.messages.order(:created_at).each do |msg|
+      next if msg.content.blank?
       ruby_llm_chat.add_message(role: msg.role, content: msg.content)
     end
 
-    @response = ruby_llm_chat.ask(@message.content, with: with)
+    # ✅ ADICIONADO: streaming de chunks
+    @response = ruby_llm_chat.ask(@message.content, with: with) do |chunk|
+      next if chunk.content.blank?
+      @assistant_message.content += chunk.content
+      broadcast_replace(@assistant_message)
+    end
+  end
+
+  # ✅ ADICIONADO: método broadcast_replace
+  def broadcast_replace(message)
+    Turbo::StreamsChannel.broadcast_replace_to(
+      @chat,
+      target: helpers.dom_id(message),
+      partial: "messages/message",
+      locals: { message: message }
+    )
   end
 
   def process_file(file)
@@ -42,7 +67,7 @@ class MessagesController < ApplicationController
     elsif file.image?
       send_question(model: "gpt-4o", with: { image: @message.file.url })
     elsif file.audio?
-      temp_file = Tempfile.new([ "audio", File.extname(@message.file.filename.to_s) ])
+      temp_file = Tempfile.new(["audio", File.extname(@message.file.filename.to_s)])
 
       URI.open(@message.file.url) do |remote_file|
         IO.copy_stream(remote_file, temp_file)
