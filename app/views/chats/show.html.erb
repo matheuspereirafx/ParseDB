@@ -1,3 +1,6 @@
+
+<%= turbo_stream_from @chat %>
+
 <div class="chat-layout" data-controller="chat">
   <!-- SIDEBAR -->
   <aside class="chat-sidebar" data-chat-target="sidebar">
@@ -45,32 +48,7 @@
 
     <div class="messages-area" data-chat-target="messages">
       <div class="messages-container">
-        <% @messages.each do |message| %>
-          <div class="message <%= message.role %>">
-            <div class="avatar"><%= message.role == 'user' ? current_user.email.first.upcase : '🤖' %></div>
-            <div>
-              <div class="bubble">
-                <% if message.content.include?("<?xml") %>
-                  <pre><code><%= message.content %></code></pre>
-                <% else %>
-                  <%= simple_format message.content %>
-                <% end %>
-              </div>
-              <div class="message-meta">
-                <%= message.role == 'user' ? 'You' : 'Assistant' %> · <%= message.created_at.strftime("%H:%M") %>
-              </div>
-
-              <!-- ↓ ADICIONADO: exibe o arquivo enviado pelo user -->
-              <% if message.role == 'user' && message.file.attached? %>
-                <div class="message-file">
-                  <strong>📎</strong>
-                  <%= link_to message.file.filename, rails_blob_path(message.file, disposition: "attachment") %>
-                </div>
-              <% end %>
-
-            </div>
-          </div>
-        <% end %>
+        <%= render @messages %>
       </div>
     </div>
 
