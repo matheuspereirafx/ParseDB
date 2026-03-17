@@ -1,4 +1,4 @@
-class InstallSolidCable < ActiveRecord::Migration[8.1]
+class CreateSolidCableMessages < ActiveRecord::Migration[8.1]
   def change
     create_table "solid_cable_messages", force: :cascade do |t|
       t.binary "channel", limit: 1024, null: false
