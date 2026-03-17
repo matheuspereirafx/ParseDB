@@ -1,4 +1,3 @@
-# app/models/message.rb
 class Message < ApplicationRecord
   belongs_to :chat
 
@@ -6,17 +5,22 @@ class Message < ApplicationRecord
 
   MAX_FILE_SIZE_MB = 10
 
-  validates :content, presence: true
+  validates :content, presence: true, if: -> { role == "user" }
   validates :role, presence: true, inclusion: { in: ["user", "assistant"] }
-
   validates :content, length: { minimum: 10, maximum: 1000 }, if: -> { role == "user" }
 
   validate :file_size_limit
+
+  after_create_commit :broadcast_append_to_chat
 
   scope :user, -> { where(role: "user") }
   scope :assistant, -> { where(role: "assistant") }
 
   private
+
+  def broadcast_append_to_chat
+    broadcast_append_to chat, target: "messages", partial: "messages/message", locals: { message: self }
+  end
 
   def file_size_limit
     if file.attached? && file.byte_size > MAX_FILE_SIZE_MB.megabytes
